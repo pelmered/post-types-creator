@@ -1,0 +1,169 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Post types creator v0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2015-02-20 19:31:05+0000\n"
+"Last-Translator: admin <web@optimalnorge.no>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: CSL v1.x\n"
+"X-Poedit-Language: Swedish\n"
+"X-Poedit-Country: SWEDEN\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Textdomain-Support: yes"
+
+#. translators: plugin header field 'Name'
+#: pe-post-type-creator.php:0
+#@ post-type-creator
+msgid "Post types creator"
+msgstr ""
+
+#. translators: plugin header field 'Author'
+#: pe-post-type-creator.php:0
+#@ post-type-creator
+msgid "Peter Elmered"
+msgstr ""
+
+#. translators: plugin header field 'Version'
+#: pe-post-type-creator.php:0
+#@ post-type-creator
+msgid "0.1.0"
+msgstr ""
+
+#: pe-post-type-creator.php:96
+#: pe-post-type-creator.php:100
+#: pe-post-type-creator.php:150
+#: pe-post-type-creator.php:154
+#@ post-type-creator
+msgid "plural_label_ucf"
+msgstr ""
+
+#: pe-post-type-creator.php:98
+#@ post-type-creator
+msgctxt "Post Type General Name"
+msgid "plural_label_ucf"
+msgstr ""
+
+#: pe-post-type-creator.php:99
+#@ post-type-creator
+msgctxt "Post Type Singular Name"
+msgid "sigular_label_ucf"
+msgstr ""
+
+#: pe-post-type-creator.php:101
+#: pe-post-type-creator.php:155
+#: pe-post-type-creator.php:156
+#, php-format
+#@ post-type-creator
+msgid "Parent %s"
+msgstr "Förälder %s"
+
+#: pe-post-type-creator.php:103
+#, php-format
+#@ post-type-creator
+msgid "All %s"
+msgstr "Alla %s"
+
+#: pe-post-type-creator.php:104
+#: pe-post-type-creator.php:105
+#, php-format
+#@ post-type-creator
+msgid "View %s"
+msgstr "Visa %s"
+
+#: pe-post-type-creator.php:106
+#, php-format
+#@ post-type-creator
+msgid "Add %s"
+msgstr "Lägg till %s"
+
+#: pe-post-type-creator.php:107
+#, php-format
+#@ post-type-creator
+msgid "Add new %s"
+msgstr "Lägg till ny %s"
+
+#: pe-post-type-creator.php:108
+#: pe-post-type-creator.php:160
+#@ post-type-creator
+msgid "Edit"
+msgstr "Ändra"
+
+#: pe-post-type-creator.php:109
+#: pe-post-type-creator.php:161
+#, php-format
+#@ post-type-creator
+msgid "Edit %s"
+msgstr "Ändra %s"
+
+#: pe-post-type-creator.php:110
+#: pe-post-type-creator.php:162
+#, php-format
+#@ post-type-creator
+msgid "Update %s"
+msgstr "Uppdatera %s"
+
+#: pe-post-type-creator.php:111
+#: pe-post-type-creator.php:164
+#, php-format
+#@ post-type-creator
+msgid "Search %s"
+msgstr "Søk efter %s"
+
+#: pe-post-type-creator.php:112
+#: pe-post-type-creator.php:167
+#, php-format
+#@ post-type-creator
+msgid "No %s found"
+msgstr "Inga  %s hittades"
+
+#: pe-post-type-creator.php:113
+#, php-format
+#@ post-type-creator
+msgid "No %s found in trash"
+msgstr "Inga %s hittades i papperskorgen"
+
+#: pe-post-type-creator.php:152
+#@ post-type-creator
+msgctxt "Taxonomy General Name"
+msgid "plural_label_ucf"
+msgstr ""
+
+#: pe-post-type-creator.php:153
+#@ post-type-creator
+msgctxt "Taxonomy Singular Name"
+msgid "sigular_label_ucf"
+msgstr ""
+
+#: pe-post-type-creator.php:157
+#: pe-post-type-creator.php:159
+#, php-format
+#@ post-type-creator
+msgid "Parent %s:"
+msgstr ""
+
+#: pe-post-type-creator.php:158
+#, php-format
+#@ post-type-creator
+msgid "New %s:"
+msgstr ""
+
+#: pe-post-type-creator.php:165
+#, php-format
+#@ plural_label
+msgid "Add or remove %s"
+msgstr ""
+
+#: pe-post-type-creator.php:166
+#@ woocommerce-as400
+msgid "Choose from the most used items"
+msgstr ""
+
