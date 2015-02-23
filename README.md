@@ -50,6 +50,11 @@ $ptc->set_post_types(array(
 ));
 
 add_action( 'init', array($ptc, 'init'), 0 );
+
+function example_get_featured_image_column( $post_id )
+{
+    echo get_the_post_thumbnail( $post_id, 'thumbnail' );
+}
 ```
 ####Adding taxonomies:
 ```php
