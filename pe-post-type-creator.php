@@ -45,17 +45,6 @@ class Pelmered_Post_Type_Creator {
     public $post_types = array();
     public $taxonomies = array();
     
-    function get_post_types()
-    {
-        return array(
-            
-
-        );
-    }
-    function get_taxonomies()
-    {
-        
-    }
     
     function set_post_types($post_types)
     {
@@ -75,11 +64,15 @@ class Pelmered_Post_Type_Creator {
     
     function init()
     {
+        add_action( 'wp_ajax_pe_ptc_sort_posts', array($this, 'sortable_ajax_handler') );
+        
+        
         $this->load_plugin_textdomain();
 
         $this->register_post_types();
         
         $this->register_taxonomies();
+        
     }
     
     function register_post_types()
@@ -91,7 +84,7 @@ class Pelmered_Post_Type_Creator {
             $post_type['sigular_label_ucf'] = ucfirst($post_type['sigular_label']);
             $post_type['plural_label_ucf'] = ucfirst($post_type['plural_label']);
             
-            $args = array(
+            $generated_args = array(
                 'label'               => __( $slug, $this->text_domain ),
                 'description'         => __( $post_type['plural_label_ucf'], $this->text_domain ),
                 'labels'              => array(
@@ -114,24 +107,166 @@ class Pelmered_Post_Type_Creator {
                 ),
             );
             
-            $defaults = array(
-                'supports'            => array( 'title', 'editor', 'thumbnail', ),
-                'taxonomies'          => array( ),
-                'hierarchical'        => false,
-                'public'              => true,
-                'show_ui'             => true,
-                'show_in_menu'        => true,
-                'show_in_nav_menus'   => true,
-                'show_in_admin_bar'   => true,
-                'menu_position'       => 5,
-                'can_export'          => true,
-                'has_archive'         => true,
-                'exclude_from_search' => false,
-                'publicly_queryable'  => true,
-                'capability_type'     => 'page',
+            $default_args = array(
+                'supports'              => array( 'title', 'editor', 'thumbnail', ),
+                'taxonomies'            => array( ),
+                'hierarchical'          => false,
+                'public'                => true,
+                'show_ui'               => true,
+                'show_in_menu'          => true,
+                'show_in_nav_menus'     => true,
+                'show_in_admin_bar'     => true,
+                'menu_position'         => 5,
+                'can_export'            => true,
+                'has_archive'           => true,
+                'exclude_from_search'   => false,
+                'publicly_queryable'    => true,
+                'capability_type'       => 'page',
+                
+                
+                //Custom
+                'admin_columns'         => array(),
+                'sortable'              => false,
+                
             );
             
-            register_post_type( $slug, wp_parse_args(array_merge($post_type, $args), $defaults) );
+            $final_args = wp_parse_args(array_merge( $generated_args, $post_type ), $default_args);
+            
+            register_post_type( $slug, $final_args );
+            
+            
+            if( is_admin() )
+            {
+                $current_post_type = $this->get_current_post_type();
+                
+                if( isset($final_args['admin_columns']))
+                {
+                    foreach( $final_args['admin_columns'] AS $column )
+                    {
+                        add_filter( 'manage_posts_columns' , array($this, 'add_admin_column'), 10, 2 );
+                        //add_filter( 'manage_'.$slug.'_posts_columns' , array($this, 'add_admin_column'), 10, 2 );
+                        
+                        add_action( 'manage_'.$slug.'_posts_custom_column' , array($this, 'add_admin_column_content'), 10, 2 );
+                    }
+                }
+                
+                if( $final_args['sortable'] && 
+                    //in_array( $current_post_type, array_keys( $this->post_types ) ) &&
+                    isset($this->post_types[$current_post_type]) &&
+                    $this->post_types[$current_post_type]['sortable'] == true
+                )
+                {
+                    /**
+                     * Make post list in admin sorted with out meta value
+                     */
+                    add_filter('pre_get_posts', array( $this, 'sort_admin_post_list' ) );
+                    
+                    wp_enqueue_script('jquery-ui-core');
+                    wp_enqueue_script('jquery-ui-sortable');
+
+                    wp_enqueue_script('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/js/sortable.js', array('jquery', 'jquery-ui-core', 'jquery-ui-sortable'));
+                    wp_enqueue_style('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/css/sortable.css', array()); 
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+    function sort_admin_post_list( $wp_query )
+    {
+        $wp_query->set( 'orderby', 'meta_value_num' );
+        $wp_query->set( 'meta_key', 'sort' );
+        $wp_query->set( 'order', 'ASC' );
+        
+        return $wp_query;
+    }
+    
+    // https://gist.github.com/mjangda/476964
+    function get_current_post_type() {
+        global $post, $typenow, $current_screen;
+
+        if( $post && $post->post_type )
+        {
+            return $post->post_type;
+        }
+        elseif( $typenow )
+        {
+            return $typenow;
+        }
+        elseif( $current_screen && $current_screen->post_type )
+        {
+            return $current_screen->post_type;
+        }
+        elseif( isset( $_REQUEST['post_type'] ) )
+        {
+            return sanitize_key( $_REQUEST['post_type'] );
+        }
+        else
+        {
+            return null;
+        }
+    }
+    
+    
+
+    
+    function sortable_ajax_handler()
+    {
+        //$post_type = filter_input(INPUT_POST, 'post_type', FILTER_SANITIZE_STRING);
+        parse_str(filter_input(INPUT_POST, 'post_data', FILTER_SANITIZE_STRING), $post_data );
+        
+        $i = 0;
+        
+        foreach( $post_data['post'] AS $post_id )
+        {
+            update_field('sort', $i++, $post_id);
+            //update_post_meta($p, 'pe_ptc_sort', $i++);
+        }
+        
+        die();
+    }
+    
+    
+    function add_admin_column( $columns, $post_type )
+    {
+        
+        $options = $this->post_types[$post_type];
+        
+        //if( is_admin() && isset($options['admin_columns']))
+        
+        foreach($options['admin_columns'] AS $slug => $data)
+        {
+            
+            if( isset($data['location']) && is_int($data['location']) )
+            {
+                $columns = array_slice($columns, 0, $data['location'], true) +
+                    array( $slug => $data['label']) +
+                    array_slice($columns, $data['location'], count($columns)-$data['location'], true);
+            }
+            else
+            {
+                $columns[$slug] = $data['label'];
+            }
+            
+        }
+        
+        return $columns;
+    }
+    function add_admin_column_content( $column_name, $post_id  )
+    {
+        // No query is executed and no performance penalty as this is already cached internaly in WP
+        $post = get_post($post_id);
+        
+        if(isset($this->post_types[ $post->post_type ]))
+        {
+            $options = $this->post_types[ $post->post_type ];
+
+            if(is_callable($options['admin_columns'][$column_name]['cb']))
+            {
+                call_user_func_array($options['admin_columns'][$column_name]['cb'], array($post_id));
+            }
         }
         
     }
@@ -155,8 +290,8 @@ class Pelmered_Post_Type_Creator {
                     'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['sigular_label']),
                     'parent_item'           => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['sigular_label']),
                     'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $taxonomy['sigular_label']),
-                    'new_item_name'         => sprintf(__( 'New %s:', $this->text_domain ), $taxonomy['sigular_label']),
-                    'add_new_item'          => sprintf(__( 'Parent %s:', $this->text_domain ), $taxonomy['sigular_label']),
+                    'new_item_name'         => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['sigular_label']),
+                    'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['sigular_label']),
                     'edit'                  => __( 'Edit', $this->text_domain ),
                     'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $taxonomy['sigular_label']),
                     'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $taxonomy['sigular_label']),
@@ -183,6 +318,29 @@ class Pelmered_Post_Type_Creator {
         
     }
     
+    /*
+    function custom_columns( $columns ) {
+    $columns = array(
+        'cb' => '<input type="checkbox" />',
+        'featured_image' => 'Image',
+        'title' => 'Title',
+        'comments' => '<span class="vers"><div title="Comments" class="comment-grey-bubble"></div></span>',
+        'date' => 'Date'
+     );
+    return $columns;
+}
+
+add_filter('manage_posts_columns' , 'custom_columns');
+
+function custom_columns_data( $column, $post_id ) {
+    switch ( $column ) {
+    case 'featured_image':
+        echo the_post_thumbnail( 'thumbnail' );
+        break;
+    }
+}
+add_action( 'manage_posts_custom_column' , 'custom_columns_data', 10, 2 ); 
+    */
 
     /**
      * Load Localisation files.

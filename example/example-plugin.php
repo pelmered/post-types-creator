@@ -22,9 +22,9 @@
 
 
 
-add_action('plugins_loaded', 'Bakerhansen_Post_Type_Creator');
+add_action('plugins_loaded', 'Example_Post_Type_Creator');
 
-function Bakerhansen_Post_Type_Creator()
+function Example_Post_Type_Creator()
 {
     //Needed for is_plugin_active() call
     include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
@@ -49,6 +49,23 @@ function Bakerhansen_Post_Type_Creator()
                 // http://codex.wordpress.org/Function_Reference/register_post_type
                 'supports'            => array( 'title', 'editor', 'thumbnail',),
                 'taxonomies'          => array( 'area' ),
+                
+                // Make post type drag and drop sortable in admin list view
+                'sortable'      => true,
+                'admin_columns' => array(
+                    /*
+                    'slug' => array(
+                        'label' => 'Column header',
+                        'cb'    => 'callback for column content. Arguments: $post_id'
+                    )
+                     */
+                    'featured_image' => array(
+                        'label'     => 'Image',
+                        'location'  => 2,
+                        // Callback for outputting content. gets post ID as argument
+                        'cb'        => 'example_get_featured_image_column'
+                    )
+                )
             ),
             'employees' => array(
                 'sigular_label' => _x('employee', 'Post type plural', $text_domain),
@@ -84,4 +101,10 @@ function Bakerhansen_Post_Type_Creator()
         
         add_action( 'init', array($ptc, 'init'), 0 );
     }
+}
+
+
+function example_get_featured_image_column( $post_id )
+{
+    echo get_the_post_thumbnail( $post_id, 'thumbnail' );
 }
