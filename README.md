@@ -25,8 +25,8 @@ $ptc = new Pelmered_Post_Type_Creator();
         
 $ptc->set_post_types(array(
     'stores' => array(
-        'sigular_label' => _x('butikk', 'Post type plural', $text_domain),
-        'plural_label'  => _x('butikker', 'Post type sigular', $text_domain),
+        'sigular_label' => _x('store', 'Post type plural', $text_domain),
+        'plural_label'  => _x('stores', 'Post type sigular', $text_domain),
         'description'   => _x('', 'Post type description', $text_domain),
         
         // Make post type drag and drop sortable in admin list view (default: false)
