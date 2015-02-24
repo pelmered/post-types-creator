@@ -3,7 +3,7 @@ Helper plugin that provides an easy interface for creating fully translated cust
 
 ##Features
 - Easy interface, just a few lines of code requiered.
-- Flexible. Does not restrict anything, you can pass any arguments to ` register_post_type() ` and ` register_taxonomy ` by simply specifying them in the normal way and they will override the defaults. 
+- Flexible. Does not restrict anything, you can pass any arguments to ` register_post_type() ` and ` register_taxonomy() ` by simply specifying them in the normal way and they will override the defaults. 
 - Translation ready (All the labels in WP Admin will be translated and you only need to specify singular and plural form of the post type name). Translation currently supports the following languages:
   - English
   - Swedish
