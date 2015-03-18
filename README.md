@@ -50,9 +50,9 @@ $ptc->set_post_types(array(
         // Make post type drag and drop sortable in admin list view (default: false)
         'sortable'      => true,
         'admin_columns' => array(
-            'slug' => array(
+            'image' => array(
                 //Column header/label
-                'label' => 'Column header',
+                'label' => 'Image',
                 //In what position should the column be (optional)
                 'location'  => 2,
                 //callback for column content. Arguments: $post_id
