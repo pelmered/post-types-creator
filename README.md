@@ -21,7 +21,7 @@ Secondly, copy the example plugin file from ` example/example-plugin.php ` in th
 
 ###Usage
 
-####Adding posts:
+####Adding custom post types:
 ```php
 $ptc = new Pelmered_Post_Type_Creator();
         
