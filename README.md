@@ -30,8 +30,7 @@ $ptc = new Pelmered_Post_Type_Creator();
 $ptc->set_post_types(array(
     'stores' => array(
         'sigular_label' => _x('store', 'Post type plural', $text_domain),
-        'plural_label'  => _x('stores', 'Post type sigular', $text_domain),
-        'description'   => _x('', 'Post type description', $text_domain),
+        'plural_label'  => _x('stores', 'Post type sigular', $text_domain)
     )
 ));
 
@@ -82,7 +81,7 @@ $ptc->set_taxonomies(array(
     'area' => array(
         'sigular_label' => _x('area', 'Post type plural', $text_domain),
         'plural_label'  => _x('areas', 'Post type sigular', $text_domain),
-        'description'   => _x('All company stores', 'Post type description', $text_domain),
+        'description'   => _x('Areas for grouping stores', 'Post type description', $text_domain),
         'post_type'    => 'stores',
         
         
