@@ -21,9 +21,9 @@ Secondly, copy the example plugin file from ` example/example-plugin.php ` in th
 
 ###Usage
 
-####Adding custom post types:
+####Adding custom post types
 
-#####Minimal
+#####Minimal:
 ```php
 $ptc = new Pelmered_Post_Type_Creator();
         
@@ -37,7 +37,7 @@ $ptc->set_post_types(array(
 
 add_action( 'init', array($ptc, 'init'), 0 );
 ```
-#####Example / typical
+#####Example / typical:
 ```php
 $ptc = new Pelmered_Post_Type_Creator();
         
