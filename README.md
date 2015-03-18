@@ -22,6 +22,8 @@ Secondly, copy the example plugin file from ` example/example-plugin.php ` in th
 ###Usage
 
 ####Adding custom post types:
+
+#####Minimal
 ```php
 $ptc = new Pelmered_Post_Type_Creator();
         
@@ -30,6 +32,20 @@ $ptc->set_post_types(array(
         'sigular_label' => _x('store', 'Post type plural', $text_domain),
         'plural_label'  => _x('stores', 'Post type sigular', $text_domain),
         'description'   => _x('', 'Post type description', $text_domain),
+    )
+));
+
+add_action( 'init', array($ptc, 'init'), 0 );
+```
+#####Example / typical
+```php
+$ptc = new Pelmered_Post_Type_Creator();
+        
+$ptc->set_post_types(array(
+    'stores' => array(
+        'sigular_label' => _x('store', 'Post type plural', $text_domain),
+        'plural_label'  => _x('stores', 'Post type sigular', $text_domain),
+        'description'   => _x('All company stores', 'Post type description', $text_domain),
         
         // Make post type drag and drop sortable in admin list view (default: false)
         'sortable'      => true,
@@ -66,7 +82,7 @@ $ptc->set_taxonomies(array(
     'area' => array(
         'sigular_label' => _x('area', 'Post type plural', $text_domain),
         'plural_label'  => _x('areas', 'Post type sigular', $text_domain),
-        'description'   => _x('', 'Post type description', $text_domain),
+        'description'   => _x('All company stores', 'Post type description', $text_domain),
         'post_type'    => 'stores',
         
         
