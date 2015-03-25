@@ -29,6 +29,8 @@ function Pelmered_Post_Type_Creator()
 }
 */
 
+require_once("lib/tax-meta-class/Tax-meta-class/Tax-meta-class.php");
+
 
 /**
  * Description of bakerhansen-image-boxes
@@ -74,6 +76,9 @@ class Pelmered_Post_Type_Creator {
         $this->register_taxonomies();
         
         add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );
+        
+        //add sort to get_terms()
+        add_filter('get_terms_orderby', array( $this, 'sort_get_terms' ), 10, 3 );
     }
     
     function register_post_types()
@@ -153,7 +158,9 @@ class Pelmered_Post_Type_Creator {
                     /**
                      * Make post list in admin sorted with out meta value
                      */
-                    add_filter('pre_get_posts', array( $this, 'sort_admin_post_list' ) );
+                    //add_filter('pre_get_posts', array( $this, 'sort_admin_post_list' ) );
+                    
+                    
                     
                     wp_enqueue_script('jquery-ui-core');
                     wp_enqueue_script('jquery-ui-sortable');
@@ -169,6 +176,32 @@ class Pelmered_Post_Type_Creator {
             
         }
         
+    }
+    
+    /**
+     * Sets ORDER BY in teh get_terms() query wich should used in both admin and in themes to get terms
+     * 
+     * @param string $orderby
+     * @param type $args
+     * @param type $taxonomies
+     * @return string
+     */
+    function sort_get_terms( $orderby, $args, $taxonomies )
+    {
+        $taxonomy = $taxonomies[0];
+        
+        if(array_key_exists( $taxonomy, $this->taxonomies) && $this->taxonomies[$taxonomy]['sortable'] )
+        {
+            $order = get_option('taxonomy_order_'.$taxonomy, array());
+
+            if( !empty($order) )
+            {
+                $orderby = 'FIELD(t.term_id, ' . implode(',', $order) . ')';
+                return $orderby;
+            }
+        }
+        
+        return $orderby;
     }
     
     function save_post( $post_id, $post, $update )
@@ -257,10 +290,11 @@ class Pelmered_Post_Type_Creator {
         }
         if( isset($post_data['tag']) && is_array($post_data['tag']))
         {
-            foreach( $post_data['tag'] AS $term_id )
+            $taxonomy = filter_input(INPUT_POST, 'taxonomy', FILTER_SANITIZE_STRING);
+
+            if( !empty($taxonomy) && !empty($post_data['tag']) )
             {
-                //update_field('sort', $i++, $term_id);
-                //update_post_meta($p, 'pe_ptc_sort', $i++);
+                update_option( 'taxonomy_order_'.$taxonomy , $post_data['tag'] );
             }
         }
         

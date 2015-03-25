@@ -10,15 +10,31 @@ jQuery(function ($) {
         axis: 'y',
         placeholder: "pe-ptc-highlight",
         update: function (event, ui) {
-            var post_data = $(this).sortable('serialize' /*, { key: "post" }*/ );
+            var post_data = $(this).sortable('serialize' /*, { key: "post" }*/ ),
+                class_name,
+                taxonomy_name,
+                $post_type,
+                $taxonomy
+            ;
             
-            var class_name = $('body').attr("class").match(/post-type-[\w-]*\b/);
+            class_name = $('body').attr("class").match(/post-type-[\w-]*\b/);
+            taxonomy_name = $('body').attr("class").match(/taxonomy-[\w-]*\b/);
             
             $post_type = class_name[0].replace('post-type-', '');
+            
+            if( taxonomy_name )
+            {
+                $taxonomy = taxonomy_name[0].replace('taxonomy-', '');
+            }
+            else
+            {
+                $taxonomy = '';
+            }
             
             var data = {
                 action: 'pe_ptc_sort_posts',
                 post_type: $post_type,
+                taxonomy: $taxonomy,
                 post_data: post_data
             };
             
