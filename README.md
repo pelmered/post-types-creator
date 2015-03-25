@@ -10,8 +10,8 @@ Current version need Advanced Custom Fields to be installed for sorting to work.
   - English
   - Swedish
   - Norwegian
-- Custom columns in admin
-- Sortable (drag and drop in the normal post list view in WP Admin)
+- Custom columns in admin with only a few lines of code
+- Drag & drop sortable (drag and drop in the normal list view in WP Admin for both posts and taxonomies/terms)
 
 
 ##Install and Usage
