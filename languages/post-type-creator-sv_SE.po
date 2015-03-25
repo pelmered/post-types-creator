@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Post types creator v0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-02-20 19:31:05+0000\n"
+"PO-Revision-Date: 2015-02-20 21:24:06+0000\n"
 "Last-Translator: admin <web@optimalnorge.no>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -148,13 +148,13 @@ msgstr ""
 #, php-format
 #@ post-type-creator
 msgid "Parent %s:"
-msgstr ""
+msgstr "Förälder %s:"
 
 #: pe-post-type-creator.php:158
 #, php-format
 #@ post-type-creator
 msgid "New %s:"
-msgstr ""
+msgstr "Ny %s:"
 
 #: pe-post-type-creator.php:165
 #, php-format

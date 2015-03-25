@@ -73,6 +73,7 @@ class Pelmered_Post_Type_Creator {
         
         $this->register_taxonomies();
         
+        add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );
     }
     
     function register_post_types()
@@ -108,26 +109,16 @@ class Pelmered_Post_Type_Creator {
             );
             
             $default_args = array(
+                // Override some defaults to cover most cases out of the box
                 'supports'              => array( 'title', 'editor', 'thumbnail', ),
                 'taxonomies'            => array( ),
-                'hierarchical'          => false,
                 'public'                => true,
-                'show_ui'               => true,
-                'show_in_menu'          => true,
-                'show_in_nav_menus'     => true,
-                'show_in_admin_bar'     => true,
-                'menu_position'         => 5,
-                'can_export'            => true,
+                'menu_position'         => 6,   //Below posts
                 'has_archive'           => true,
-                'exclude_from_search'   => false,
-                'publicly_queryable'    => true,
-                'capability_type'       => 'page',
-                
                 
                 //Custom
                 'admin_columns'         => array(),
                 'sortable'              => false,
-                
             );
             
             $final_args = wp_parse_args(array_merge( $generated_args, $post_type ), $default_args);
@@ -149,10 +140,13 @@ class Pelmered_Post_Type_Creator {
                         add_action( 'manage_'.$slug.'_posts_custom_column' , array($this, 'add_admin_column_content'), 10, 2 );
                     }
                 }
-                
+                /*
+                var_dump(isset($this->post_types[$current_post_type]));
+                var_dump(($this->post_types[$current_post_type]));
+                */
                 if( $final_args['sortable'] && 
                     //in_array( $current_post_type, array_keys( $this->post_types ) ) &&
-                    isset($this->post_types[$current_post_type]) &&
+                    isset($this->post_types[$current_post_type]['sortable']) &&
                     $this->post_types[$current_post_type]['sortable'] == true
                 )
                 {
@@ -170,8 +164,20 @@ class Pelmered_Post_Type_Creator {
                 
             }
             
+            
+
+            
         }
         
+    }
+    
+    function save_post( $post_id, $post, $update )
+    {
+        if(in_array($post->post_type , $this->post_types) && $this->post_types[$post->post_type]['sortable'] )
+        {
+            update_field('sort', apply_filters('pe_ptc_sort_default', 99, $post_id, $post, $update ), $post_id);
+            //update_post_meta( $post_id, 'sort', apply_filters('pe_ptc_sort_default', 99, $post_id, $post, $update ));
+        }
     }
     
     function sort_admin_post_list( $wp_query )
@@ -186,7 +192,17 @@ class Pelmered_Post_Type_Creator {
     // https://gist.github.com/mjangda/476964
     function get_current_post_type() {
         global $post, $typenow, $current_screen;
-
+        global $my_admin_page;
+        
+        /*
+        var_dump($my_admin_page);
+        
+        error_reporting(E_ALL);
+        ini_set('display_startup_errors', 1);
+        ini_set('display_errors', 1);
+        print_r(get_current_screen());
+        */
+        
         if( $post && $post->post_type )
         {
             return $post->post_type;
@@ -209,6 +225,18 @@ class Pelmered_Post_Type_Creator {
         }
     }
     
+    function get_current_taxonomy( $post_type = '' ) 
+    {
+        if( isset( $_REQUEST['taxonomy'] ) && ( empty($post_type) || $_REQUEST['post_type'] == $post_type ) )
+        {
+            return sanitize_key( $_REQUEST['taxonomy'] );
+        }
+        else
+        {
+            return null;
+        }
+    }
+    
     
 
     
@@ -219,10 +247,21 @@ class Pelmered_Post_Type_Creator {
         
         $i = 0;
         
-        foreach( $post_data['post'] AS $post_id )
+        if( isset($post_data['post']) && is_array($post_data['post']))
         {
-            update_field('sort', $i++, $post_id);
-            //update_post_meta($p, 'pe_ptc_sort', $i++);
+            foreach( $post_data['post'] AS $tag_id )
+            {
+                update_field('sort', $i++, $tag_id);
+                //update_post_meta($p, 'pe_ptc_sort', $i++);
+            }
+        }
+        if( isset($post_data['tag']) && is_array($post_data['tag']))
+        {
+            foreach( $post_data['tag'] AS $term_id )
+            {
+                //update_field('sort', $i++, $term_id);
+                //update_post_meta($p, 'pe_ptc_sort', $i++);
+            }
         }
         
         die();
@@ -231,7 +270,6 @@ class Pelmered_Post_Type_Creator {
     
     function add_admin_column( $columns, $post_type )
     {
-        
         $options = $this->post_types[$post_type];
         
         //if( is_admin() && isset($options['admin_columns']))
@@ -268,7 +306,6 @@ class Pelmered_Post_Type_Creator {
                 call_user_func_array($options['admin_columns'][$column_name]['cb'], array($post_id));
             }
         }
-        
     }
     
     function register_taxonomies()
@@ -312,7 +349,38 @@ class Pelmered_Post_Type_Creator {
 		'show_tagcloud'              => true,
             );
             
-            register_taxonomy( $slug, $taxonomy['post_type'], wp_parse_args(array_merge($taxonomy, $args), $defaults) );
+            $final_args = wp_parse_args(array_merge($taxonomy, $args), $defaults);
+            
+            register_taxonomy( $slug, $taxonomy['post_type'], $final_args );
+            
+            
+            if( is_admin() )
+            {
+                $current_taxonomy = $this->get_current_taxonomy( $taxonomy['post_type'] );
+                
+                if( isset($final_args['admin_fields']))
+                {
+                    //TODO
+                }
+                
+                if( $final_args['sortable'] && 
+                    //in_array( $current_post_type, array_keys( $this->post_types ) ) &&
+                    isset($this->taxonomies[$current_taxonomy]['sortable']) &&
+                    $this->taxonomies[$current_taxonomy]['sortable'] == true
+                )
+                {
+                    /**
+                     * Make post list in admin sorted with out meta value
+                     */
+                    add_filter('pre_get_posts', array( $this, 'sort_admin_post_list' ) );
+                    
+                    wp_enqueue_script('jquery-ui-core');
+                    wp_enqueue_script('jquery-ui-sortable');
+
+                    wp_enqueue_script('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/js/sortable.js', array('jquery', 'jquery-ui-core', 'jquery-ui-sortable'));
+                    wp_enqueue_style('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/css/sortable.css', array()); 
+                }
+            }
         }
         
         
