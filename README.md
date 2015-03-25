@@ -84,6 +84,8 @@ $ptc->set_taxonomies(array(
         'description'   => _x('Areas for grouping stores', 'Post type description', $text_domain),
         'post_type'    => 'stores',
         
+        // Make post type drag and drop sortable in admin list view (default: false). Affects all get_terms()-queries
+        'sortable'      => true,
         
         // Override any defaults from register_taxonomy()
         // http://codex.wordpress.org/Function_Reference/register_taxonomy
