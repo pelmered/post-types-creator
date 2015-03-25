@@ -1,0 +1,3 @@
+[submodule "lib/tax-meta-class"]
+	path = lib/tax-meta-class
+	url = https://github.com/bainternet/Tax-Meta-Class.git
