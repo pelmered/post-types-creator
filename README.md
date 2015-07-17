@@ -24,6 +24,7 @@ Secondly, copy the example plugin file from ` example/example-plugin.php ` in th
 ####Adding custom post types
 
 #####Minimal:
+Registers a post type with the slug ` stores ` and the labels tranlatable based on ` Post type plural ` (plural) and ` Post type plural ` (singular).
 ```php
 $ptc = new Pelmered_Post_Type_Creator();
         
@@ -37,6 +38,7 @@ $ptc->set_post_types(array(
 add_action( 'init', array($ptc, 'init'), 0 );
 ```
 #####Example / typical:
+Same as minimal, but allso adds a description, makes it drag and drop sortable in the admin list, adds a custom admin column and overides some ` register_post_type() ` defaults, for example connecting the taxonomy ` area `(see example below).
 ```php
 $ptc = new Pelmered_Post_Type_Creator();
         
@@ -74,6 +76,7 @@ function example_get_featured_image_column( $post_id )
 }
 ```
 ####Adding taxonomies:
+Typical taxonomy that is drag and drop sortable in the normal admin list view and connected to the ` stores ` post type in the example above.
 ```php
 $ptc = new Pelmered_Post_Type_Creator();
 
