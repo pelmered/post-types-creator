@@ -1,0 +1,11 @@
+{
+  "name"       : "pelmered/post-types-creator",
+  "description": "Helper plugin for easily creating localize-ready custom post types and custom taxonomies in WordPress",
+  "homepage"   : "https://github.com/pelmered/Post-types-creator",
+  "type"       : "wordpress-plugin",
+  "license"    : "GPL-2.0+",
+  "require"    : {
+    "composer/installers": "~1.0"
+  }
+}
+
