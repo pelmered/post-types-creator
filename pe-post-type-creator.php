@@ -21,11 +21,11 @@
  */
 
 /*
-add_action('plugins_loaded', 'Pelmered_Post_Type_Creator', 1);
+add_action('plugins_loaded', 'PE_Post_Type_Creator', 1);
 
-function Pelmered_Post_Type_Creator()
+function PE_Post_Type_Creator()
 {
-    new Pelmered_Post_Type_Creator();
+    new PE_Post_Type_Creator();
 }
 */
 
@@ -37,7 +37,7 @@ require_once("lib/tax-meta-class/Tax-meta-class/Tax-meta-class.php");
  *
  * @author peter
  */
-class Pelmered_Post_Type_Creator {
+class PE_Post_Type_Creator {
     
     private $plugin_slug = 'post-type-creator';
     

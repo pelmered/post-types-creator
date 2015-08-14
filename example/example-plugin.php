@@ -31,13 +31,13 @@ function Example_Post_Type_Creator()
     
     if(
         is_plugin_active( 'pe-example-plugin/pe-example-plugin.php' ) &&
-        class_exists( 'Pelmered_Post_Type_Creator' )
+        class_exists( 'PE_Post_Type_Creator' )
     )
     {
         $text_domain = 'example-plugin';
         
         
-        $ptc = new Pelmered_Post_Type_Creator();
+        $ptc = new PE_Post_Type_Creator();
         
         $ptc->set_post_types(array(
             'stores' => array(

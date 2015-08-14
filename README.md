@@ -15,6 +15,31 @@ Current version need Advanced Custom Fields to be installed for sorting to work.
 
 
 ##Install and Usage
+
+###Composer
+Add the repository and add ` pelmered/post-types-creator ` to the require section in your composer.json. Example of typical full composer.json file:
+
+```
+{
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/pelmered/post-types-creator"
+    }
+  ],
+  "require": {
+    "pelmered/post-types-creator": "dev-master"
+  },
+  "extra": {
+    "wordpress-install-dir": "public/wp",
+    "installer-paths": {
+        "public/wp-content/plugins/{$name}/": ["type:wordpress-plugin"]
+    }
+  }
+}
+```
+
+###Normal manual install
 First, install the plugin as usnual by uploading the plugin to you plugins folder, typically ` wp-content/plugins/  `.
 
 Secondly, copy the example plugin file from ` example/example-plugin.php ` in this plugin to your plugins folder, typically ` wp-content/plugins/  ` and change the name and edit the data acording to your needs.
@@ -24,9 +49,11 @@ Secondly, copy the example plugin file from ` example/example-plugin.php ` in th
 ####Adding custom post types
 
 #####Minimal:
-Registers a post type with the slug ` stores ` and the labels tranlatable based on ` Post type plural ` (plural) and ` Post type plural ` (singular).
+Registers a post type with the slug ` stores ` and the labels tranlatable based on ` Post type plural ` (plural) and ` Post type sigular ` (singular).
+
 ```php
-$ptc = new Pelmered_Post_Type_Creator();
+$ptc = new PE_Post_Type_Creator();
+$text_domain = 'text-domain';
         
 $ptc->set_post_types(array(
     'stores' => array(
@@ -37,10 +64,13 @@ $ptc->set_post_types(array(
 
 add_action( 'init', array($ptc, 'init'), 0 );
 ```
+
 #####Example / typical:
 Same as minimal, but allso adds a description, makes it drag and drop sortable in the admin list, adds a custom admin column and overides some ` register_post_type() ` defaults, for example connecting the taxonomy ` area `(see example below).
+
 ```php
-$ptc = new Pelmered_Post_Type_Creator();
+$ptc = new PE_Post_Type_Creator();
+$text_domain = 'text-domain';
         
 $ptc->set_post_types(array(
     'stores' => array(
@@ -75,10 +105,13 @@ function example_get_featured_image_column( $post_id )
     echo get_the_post_thumbnail( $post_id, 'thumbnail' );
 }
 ```
+
 ####Adding taxonomies:
 Typical taxonomy that is drag and drop sortable in the normal admin list view and connected to the ` stores ` post type in the example above.
+
 ```php
-$ptc = new Pelmered_Post_Type_Creator();
+$ptc = new PE_Post_Type_Creator();
+$text_domain = 'text-domain';
 
 $ptc->set_taxonomies(array(
     'area' => array(
@@ -98,3 +131,4 @@ $ptc->set_taxonomies(array(
 
 add_action( 'init', array($ptc, 'init'), 0 );
 ```
+
