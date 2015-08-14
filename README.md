@@ -49,7 +49,7 @@ Secondly, copy the example plugin file from ` example/example-plugin.php ` in th
 ####Adding custom post types
 
 #####Minimal:
-Registers a post type with the slug ` stores ` and the labels tranlatable based on ` Post type plural ` (plural) and ` Post type sigular ` (singular).
+Registers a post type with the slug ` stores ` and the labels tranlatable based on ` Post type plural ` (plural) and ` Post type singular ` (singular).
 
 ```php
 $ptc = new PE_Post_Type_Creator();
@@ -57,8 +57,8 @@ $text_domain = 'text-domain';
         
 $ptc->set_post_types(array(
     'stores' => array(
-        'sigular_label' => _x('store', 'Post type plural', $text_domain),
-        'plural_label'  => _x('stores', 'Post type sigular', $text_domain)
+        'singular_label' => _x('store', 'Post type plural', $text_domain),
+        'plural_label'  => _x('stores', 'Post type singular', $text_domain)
     )
 ));
 
@@ -74,8 +74,8 @@ $text_domain = 'text-domain';
         
 $ptc->set_post_types(array(
     'stores' => array(
-        'sigular_label' => _x('store', 'Post type plural', $text_domain),
-        'plural_label'  => _x('stores', 'Post type sigular', $text_domain),
+        'singular_label' => _x('store', 'Post type plural', $text_domain),
+        'plural_label'  => _x('stores', 'Post type singular', $text_domain),
         'description'   => _x('All company stores', 'Post type description', $text_domain),
         
         // Make post type drag and drop sortable in admin list view (default: false)
@@ -115,8 +115,8 @@ $text_domain = 'text-domain';
 
 $ptc->set_taxonomies(array(
     'area' => array(
-        'sigular_label' => _x('area', 'Post type plural', $text_domain),
-        'plural_label'  => _x('areas', 'Post type sigular', $text_domain),
+        'singular_label' => _x('area', 'Post type plural', $text_domain),
+        'plural_label'  => _x('areas', 'Post type singular', $text_domain),
         'description'   => _x('Areas for grouping stores', 'Post type description', $text_domain),
         'post_type'    => 'stores',
         

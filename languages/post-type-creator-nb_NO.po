@@ -53,7 +53,7 @@ msgstr ""
 #: post-type-creator.php:98
 #@ post-type-creator
 msgctxt "Post Type Singular Name"
-msgid "sigular_label_ucf"
+msgid "singular_label_ucf"
 msgstr ""
 
 #: post-type-creator.php:100
@@ -124,7 +124,7 @@ msgstr ""
 
 #: post-type-creator.php:41
 #@ post-type-creator
-msgctxt "Post type sigular"
+msgctxt "Post type singular"
 msgid "bildebokser"
 msgstr ""
 

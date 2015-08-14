@@ -85,7 +85,7 @@ class PE_Post_Type_Creator {
         
         foreach($post_types AS $slug => $post_type)
         {
-            $post_type['sigular_label_ucf'] = ucfirst($post_type['sigular_label']);
+            $post_type['singular_label_ucf'] = ucfirst($post_type['singular_label']);
             $post_type['plural_label_ucf'] = ucfirst($post_type['plural_label']);
             
             $generated_args = array(
@@ -93,18 +93,18 @@ class PE_Post_Type_Creator {
                 'description'         => __( $post_type['plural_label_ucf'], $this->text_domain ),
                 'labels'              => array(
                     'name'                  => _x( $post_type['plural_label_ucf'], 'Post Type General Name', $this->text_domain ),
-                    'singular_name'         => _x( $post_type['sigular_label_ucf'], 'Post Type Singular Name', $this->text_domain ),
+                    'singular_name'         => _x( $post_type['singular_label_ucf'], 'Post Type Singular Name', $this->text_domain ),
                     'menu_name'             => __( $post_type['plural_label_ucf'], $this->text_domain ),
-                    'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $post_type['sigular_label']),
-                    //'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $post_type['sigular_label']),
+                    'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $post_type['singular_label']),
+                    //'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $post_type['singular_label']),
                     'all_items'             => sprintf(__( 'All %s', $this->text_domain ), $post_type['plural_label']),
-                    'view'                  => sprintf(__( 'View %s', $this->text_domain ), $post_type['sigular_label']),
-                    'view_item'             => sprintf(__( 'View %s', $this->text_domain ), $post_type['sigular_label']),
-                    'add_new'               => sprintf(__( 'Add %s', $this->text_domain ), $post_type['sigular_label']),
-                    'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $post_type['sigular_label']),
+                    'view'                  => sprintf(__( 'View %s', $this->text_domain ), $post_type['singular_label']),
+                    'view_item'             => sprintf(__( 'View %s', $this->text_domain ), $post_type['singular_label']),
+                    'add_new'               => sprintf(__( 'Add %s', $this->text_domain ), $post_type['singular_label']),
+                    'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $post_type['singular_label']),
                     'edit'                  => __( 'Edit', $this->text_domain ),
-                    'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $post_type['sigular_label']),
-                    'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $post_type['sigular_label']),
+                    'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $post_type['singular_label']),
+                    'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $post_type['singular_label']),
                     'search_items'          => sprintf( __('Search %s', $this->text_domain), $post_type['plural_label']),
                     'not_found'             => sprintf(__( 'No %s found', $this->text_domain ), $post_type['plural_label']),
                     'not_found_in_trash'    => sprintf(__( 'No %s found in trash', $this->text_domain ), $post_type['plural_label']),
@@ -346,7 +346,7 @@ class PE_Post_Type_Creator {
         
         foreach($taxonomies AS $slug => $taxonomy)
         {
-            $taxonomy['sigular_label_ucf'] = ucfirst($taxonomy['sigular_label']);
+            $taxonomy['singular_label_ucf'] = ucfirst($taxonomy['singular_label']);
             $taxonomy['plural_label_ucf'] = ucfirst($taxonomy['plural_label']);
             
             $args = array(
@@ -354,16 +354,16 @@ class PE_Post_Type_Creator {
                 'description'         => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
                 'labels'              => array(
                     'name'                  => _x( $taxonomy['plural_label_ucf'], 'Taxonomy General Name', $this->text_domain ),
-                    'singular_name'         => _x( $taxonomy['sigular_label_ucf'], 'Taxonomy Singular Name', $this->text_domain ),
+                    'singular_name'         => _x( $taxonomy['singular_label_ucf'], 'Taxonomy Singular Name', $this->text_domain ),
                     'menu_name'             => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
-                    'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['sigular_label']),
-                    'parent_item'           => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['sigular_label']),
-                    'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $taxonomy['sigular_label']),
-                    'new_item_name'         => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['sigular_label']),
-                    'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['sigular_label']),
+                    'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['singular_label']),
+                    'parent_item'           => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['singular_label']),
+                    'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $taxonomy['singular_label']),
+                    'new_item_name'         => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['singular_label']),
+                    'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['singular_label']),
                     'edit'                  => __( 'Edit', $this->text_domain ),
-                    'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $taxonomy['sigular_label']),
-                    'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $taxonomy['sigular_label']),
+                    'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $taxonomy['singular_label']),
+                    'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $taxonomy['singular_label']),
                     //'separate_items_with_commas' => __( 'Separate items with commas', $this->text_domain ),
                     'search_items'          => sprintf( __('Search %s', $this->text_domain), $taxonomy['plural_label']),
                     'add_or_remove_items'   => __( 'Add or remove %s', $taxonomy['plural_label'] ),

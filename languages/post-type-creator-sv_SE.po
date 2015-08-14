@@ -55,7 +55,7 @@ msgstr ""
 #: pe-post-type-creator.php:99
 #@ post-type-creator
 msgctxt "Post Type Singular Name"
-msgid "sigular_label_ucf"
+msgid "singular_label_ucf"
 msgstr ""
 
 #: pe-post-type-creator.php:101
@@ -140,7 +140,7 @@ msgstr ""
 #: pe-post-type-creator.php:153
 #@ post-type-creator
 msgctxt "Taxonomy Singular Name"
-msgid "sigular_label_ucf"
+msgid "singular_label_ucf"
 msgstr ""
 
 #: pe-post-type-creator.php:157

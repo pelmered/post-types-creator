@@ -41,8 +41,8 @@ function Example_Post_Type_Creator()
         
         $ptc->set_post_types(array(
             'stores' => array(
-                'sigular_label' => _x('butikk', 'Post type plural', $text_domain),
-                'plural_label'  => _x('butikker', 'Post type sigular', $text_domain),
+                'singular_label' => _x('butikk', 'Post type plural', $text_domain),
+                'plural_label'  => _x('butikker', 'Post type singular', $text_domain),
                 'description'   => _x('', 'Post type description', $text_domain),
                 
                 // Override any defaults from register_post_type()
@@ -68,8 +68,8 @@ function Example_Post_Type_Creator()
                 )
             ),
             'employees' => array(
-                'sigular_label' => _x('employee', 'Post type plural', $text_domain),
-                'plural_label'  => _x('employees', 'Post type sigular', $text_domain),
+                'singular_label' => _x('employee', 'Post type plural', $text_domain),
+                'plural_label'  => _x('employees', 'Post type singular', $text_domain),
                 'description'   => _x('', 'Post type description', $text_domain),
                 
                 // Override any defaults from register_post_type()
@@ -80,8 +80,8 @@ function Example_Post_Type_Creator()
         
         $ptc->set_taxonomies(array(
             'area' => array(
-                'sigular_label' => _x('area', 'Post type plural', $text_domain),
-                'plural_label'  => _x('areas', 'Post type sigular', $text_domain),
+                'singular_label' => _x('area', 'Post type plural', $text_domain),
+                'plural_label'  => _x('areas', 'Post type singular', $text_domain),
                 'description'   => _x('', 'Post type description', $text_domain),
                 'post_type'    => 'stores',
                 
@@ -92,8 +92,8 @@ function Example_Post_Type_Creator()
                 
             ),
             'business_unit' => array(
-                'sigular_label' => _x('Business unit', 'Post type plural', $text_domain),
-                'plural_label'  => _x('Business units', 'Post type sigular', $text_domain),
+                'singular_label' => _x('Business unit', 'Post type plural', $text_domain),
+                'plural_label'  => _x('Business units', 'Post type singular', $text_domain),
                 'description'   => _x('Business unit for categorizing the employees', 'Post type description', $text_domain),
                 'post_type'    => 'employees'
             )
