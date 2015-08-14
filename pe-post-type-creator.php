@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Post types creator
- * Description: 
+ * Description:
  * Version:     0.1.0
  * Author:      Peter Elmered
  * Text Domain: post-type-creator
@@ -36,21 +36,21 @@ function PE_Post_Type_Creator()
  * @author peter
  */
 class PE_Post_Type_Creator {
-    
+
     private $plugin_slug = 'post-type-creator';
-    
+
     //Also edit in plugin header
-    private $text_domain = 'post-type-creator'; 
-    
+    private $text_domain = 'post-type-creator';
+
     public $post_types = array();
     public $taxonomies = array();
-    
-    
+
+
     function set_post_types($post_types)
     {
         $this->post_types = $post_types;
     }
-    
+
     function set_taxonomies($taxonomies)
     {
         $this->taxonomies = $taxonomies;
@@ -61,33 +61,33 @@ class PE_Post_Type_Creator {
         add_action( 'init', array($this, 'init'), 0 );
     }
     */
-    
+
     function init()
     {
         add_action( 'wp_ajax_pe_ptc_sort_posts', array($this, 'sortable_ajax_handler') );
-        
-        
+
+
         $this->load_plugin_textdomain();
 
         $this->register_post_types();
-        
+
         $this->register_taxonomies();
-        
+
         add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );
-        
+
         //add sort to get_terms()
         add_filter('get_terms_orderby', array( $this, 'sort_get_terms' ), 10, 3 );
     }
-    
+
     function register_post_types()
     {
         $post_types = $this->post_types;
-        
+
         foreach($post_types AS $slug => $post_type)
         {
             $post_type['singular_label_ucf'] = ucfirst($post_type['singular_label']);
             $post_type['plural_label_ucf'] = ucfirst($post_type['plural_label']);
-            
+
             $generated_args = array(
                 'label'               => __( $slug, $this->text_domain ),
                 'description'         => __( $post_type['plural_label_ucf'], $this->text_domain ),
@@ -110,7 +110,7 @@ class PE_Post_Type_Creator {
                     'not_found_in_trash'    => sprintf(__( 'No %s found in trash', $this->text_domain ), $post_type['plural_label']),
                 ),
             );
-            
+
             $default_args = array(
                 // Override some defaults to cover most cases out of the box
                 'supports'              => array( 'title', 'editor', 'thumbnail', ),
@@ -118,67 +118,61 @@ class PE_Post_Type_Creator {
                 'public'                => true,
                 'menu_position'         => 6,   //Below posts
                 'has_archive'           => true,
-                
+
                 //Custom
                 'admin_columns'         => array(),
                 'sortable'              => false,
             );
-            
+
             $final_args = wp_parse_args(array_merge( $generated_args, $post_type ), $default_args);
-            
+
             register_post_type( $slug, $final_args );
-            
-            
+
             if( is_admin() )
             {
                 $current_post_type = $this->get_current_post_type();
-                
+
                 if( isset($final_args['admin_columns']))
                 {
                     foreach( $final_args['admin_columns'] AS $column )
                     {
                         add_filter( 'manage_posts_columns' , array($this, 'add_admin_column'), 10, 2 );
                         //add_filter( 'manage_'.$slug.'_posts_columns' , array($this, 'add_admin_column'), 10, 2 );
-                        
+
                         add_action( 'manage_'.$slug.'_posts_custom_column' , array($this, 'add_admin_column_content'), 10, 2 );
                     }
                 }
-                /*
-                var_dump(isset($this->post_types[$current_post_type]));
-                var_dump(($this->post_types[$current_post_type]));
-                */
-                if( $final_args['sortable'] && 
+
+                if( $final_args['sortable'] &&
                     //in_array( $current_post_type, array_keys( $this->post_types ) ) &&
                     isset($this->post_types[$current_post_type]['sortable']) &&
                     $this->post_types[$current_post_type]['sortable'] == true
                 )
                 {
                     /**
-                     * Make post list in admin sorted with out meta value
+                     * Make post list in admin sorted without meta value
                      */
                     //add_filter('pre_get_posts', array( $this, 'sort_admin_post_list' ) );
-                    
-                    
-                    
+
                     wp_enqueue_script('jquery-ui-core');
                     wp_enqueue_script('jquery-ui-sortable');
 
                     wp_enqueue_script('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/js/sortable.js', array('jquery', 'jquery-ui-core', 'jquery-ui-sortable'));
-                    wp_enqueue_style('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/css/sortable.css', array()); 
+                    wp_enqueue_style('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/css/sortable.css', array());
                 }
-                
-            }
-            
-            
 
-            
+            }
+
+
+
+
         }
-        
+
     }
-    
+
     /**
      * Sets ORDER BY in teh get_terms() query wich should used in both admin and in themes to get terms
-     * 
+     *
      * @param string $orderby
      * @param type $args
      * @param type $taxonomies
@@ -187,7 +181,7 @@ class PE_Post_Type_Creator {
     function sort_get_terms( $orderby, $args, $taxonomies )
     {
         $taxonomy = $taxonomies[0];
-        
+
         if(array_key_exists( $taxonomy, $this->taxonomies) && $this->taxonomies[$taxonomy]['sortable'] )
         {
             $order = get_option('taxonomy_order_'.$taxonomy, array());
@@ -198,10 +192,10 @@ class PE_Post_Type_Creator {
                 return $orderby;
             }
         }
-        
+
         return $orderby;
     }
-    
+
     function save_post( $post_id, $post, $update )
     {
         if(in_array($post->post_type , $this->post_types) && $this->post_types[$post->post_type]['sortable'] )
@@ -210,30 +204,21 @@ class PE_Post_Type_Creator {
             //update_post_meta( $post_id, 'sort', apply_filters('pe_ptc_sort_default', 99, $post_id, $post, $update ));
         }
     }
-    
+
     function sort_admin_post_list( $wp_query )
     {
         $wp_query->set( 'orderby', 'meta_value_num' );
         $wp_query->set( 'meta_key', 'sort' );
         $wp_query->set( 'order', 'ASC' );
-        
+
         return $wp_query;
     }
-    
+
     // https://gist.github.com/mjangda/476964
-    function get_current_post_type() {
+    function get_current_post_type()
+    {
         global $post, $typenow, $current_screen;
-        global $my_admin_page;
-        
-        /*
-        var_dump($my_admin_page);
-        
-        error_reporting(E_ALL);
-        ini_set('display_startup_errors', 1);
-        ini_set('display_errors', 1);
-        print_r(get_current_screen());
-        */
-        
+
         if( $post && $post->post_type )
         {
             return $post->post_type;
@@ -255,8 +240,8 @@ class PE_Post_Type_Creator {
             return null;
         }
     }
-    
-    function get_current_taxonomy( $post_type = '' ) 
+
+    function get_current_taxonomy( $post_type = '' )
     {
         if( isset( $_REQUEST['taxonomy'] ) && ( empty($post_type) || $_REQUEST['post_type'] == $post_type ) )
         {
@@ -267,17 +252,24 @@ class PE_Post_Type_Creator {
             return null;
         }
     }
-    
-    
 
-    
     function sortable_ajax_handler()
     {
         //$post_type = filter_input(INPUT_POST, 'post_type', FILTER_SANITIZE_STRING);
         parse_str(filter_input(INPUT_POST, 'post_data', FILTER_SANITIZE_STRING), $post_data );
-        
+
+        $post_type = filter_input(INPUT_POST, 'post_type', FILTER_SANITIZE_STRING);
+        $taxonomy = filter_input(INPUT_POST, 'taxonomy', FILTER_SANITIZE_STRING);
+
         $i = 0;
-        
+
+        // TODO
+        // Sorted taxonomies not supported yes
+        if( empty( $taxonomy ) )
+        {
+            //return;
+        }
+
         if( isset($post_data['post']) && is_array($post_data['post']))
         {
             foreach( $post_data['post'] AS $tag_id )
@@ -295,20 +287,20 @@ class PE_Post_Type_Creator {
                 update_option( 'taxonomy_order_'.$taxonomy , $post_data['tag'] );
             }
         }
-        
+
         die();
     }
-    
-    
+
+
     function add_admin_column( $columns, $post_type )
     {
         $options = $this->post_types[$post_type];
-        
+
         //if( is_admin() && isset($options['admin_columns']))
-        
+
         foreach($options['admin_columns'] AS $slug => $data)
         {
-            
+
             if( isset($data['location']) && is_int($data['location']) )
             {
                 $columns = array_slice($columns, 0, $data['location'], true) +
@@ -319,16 +311,16 @@ class PE_Post_Type_Creator {
             {
                 $columns[$slug] = $data['label'];
             }
-            
+
         }
-        
+
         return $columns;
     }
     function add_admin_column_content( $column_name, $post_id  )
     {
         // No query is executed and no performance penalty as this is already cached internaly in WP
         $post = get_post($post_id);
-        
+
         if(isset($this->post_types[ $post->post_type ]))
         {
             $options = $this->post_types[ $post->post_type ];
@@ -339,16 +331,16 @@ class PE_Post_Type_Creator {
             }
         }
     }
-    
+
     function register_taxonomies()
     {
         $taxonomies = $this->taxonomies;
-        
+
         foreach($taxonomies AS $slug => $taxonomy)
         {
             $taxonomy['singular_label_ucf'] = ucfirst($taxonomy['singular_label']);
             $taxonomy['plural_label_ucf'] = ucfirst($taxonomy['plural_label']);
-            
+
             $args = array(
                 'label'               => __( $slug, $this->text_domain ),
                 'description'         => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
@@ -371,31 +363,34 @@ class PE_Post_Type_Creator {
                     'not_found'             => sprintf(__( 'No %s found', $this->text_domain ), $taxonomy['plural_label']),
                 ),
             );
-            
-            $defaults = array(
-		'hierarchical'               => true,
-		'public'                     => true,
-		'show_ui'                    => true,
-		'show_admin_column'          => true,
-		'show_in_nav_menus'          => true,
-		'show_tagcloud'              => true,
+
+            $default_args = array(
+                'hierarchical'               => true,
+                'public'                     => true,
+                'show_ui'                    => true,
+                'show_admin_column'          => true,
+                'show_in_nav_menus'          => true,
+                'show_tagcloud'              => true,
+
+                //Custom
+                'sortable'              => false,
             );
-            
-            $final_args = wp_parse_args(array_merge($taxonomy, $args), $defaults);
-            
+
+            $final_args = wp_parse_args(array_merge($taxonomy, $args), $default_args);
+
             register_taxonomy( $slug, $taxonomy['post_type'], $final_args );
-            
-            
+
             if( is_admin() )
             {
+
                 $current_taxonomy = $this->get_current_taxonomy( $taxonomy['post_type'] );
-                
+
                 if( isset($final_args['admin_fields']))
                 {
                     //TODO
                 }
-                
-                if( $final_args['sortable'] && 
+
+                if( $final_args['sortable'] &&
                     //in_array( $current_post_type, array_keys( $this->post_types ) ) &&
                     isset($this->taxonomies[$current_taxonomy]['sortable']) &&
                     $this->taxonomies[$current_taxonomy]['sortable'] == true
@@ -404,18 +399,30 @@ class PE_Post_Type_Creator {
                     /**
                      * Make post list in admin sorted with out meta value
                      */
-                    add_filter('pre_get_posts', array( $this, 'sort_admin_post_list' ) );
-                    
+                    //add_filter('pre_get_posts', array( $this, 'sort_admin_tax_list' ) );
+
+                    /**
+                     * Show all terms on the same page. Needed for sortable to work.
+                     */
+                    // TODO: Better solution if there are many terms needed.
+                    add_filter( 'edit_' . $slug . '_per_page', function() {
+                        return 999999999;
+                    } );
+
                     wp_enqueue_script('jquery-ui-core');
                     wp_enqueue_script('jquery-ui-sortable');
 
                     wp_enqueue_script('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/js/sortable.js', array('jquery', 'jquery-ui-core', 'jquery-ui-sortable'));
-                    wp_enqueue_style('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/css/sortable.css', array()); 
+                    wp_enqueue_style('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/css/sortable.css', array());
                 }
+                else
+                {
+                    $this->taxonomies[$slug]['sortable'] = false;
+                }
+
             }
         }
-        
-        
+
     }
 
     /**
@@ -432,13 +439,13 @@ class PE_Post_Type_Creator {
      * 	 	- woocommerce/i18n/languages/post-tpye-creator-LOCALE.mo (which if not found falls back to:)
      * 	 	- WP_LANG_DIR/plugins/post-tpye-creator-LOCALE.mo
      */
-    public function load_plugin_textdomain() 
+    public function load_plugin_textdomain()
     {
         $locale = apply_filters( 'plugin_locale', get_locale(), $this->text_domain );
 
         load_textdomain( $this->text_domain, WP_LANG_DIR . '/' . $this->text_domain . '/-' . $this->text_domain . '-' . $locale . '.mo' );
         load_plugin_textdomain( $this->text_domain, false, plugin_basename( dirname( __FILE__ ) ) . "/languages" );
     }
-    
-    
+
+
 }
