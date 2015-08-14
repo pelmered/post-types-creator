@@ -29,8 +29,6 @@ function PE_Post_Type_Creator()
 }
 */
 
-require_once("lib/tax-meta-class/Tax-meta-class/Tax-meta-class.php");
-
 
 /**
  * Description of bakerhansen-image-boxes
