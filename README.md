@@ -132,4 +132,4 @@ $ptc->set_taxonomies(array(
 add_action( 'init', array($ptc, 'init'), 0 );
 ```
 
-For more examples, or help to get started see the example plugin in ` example/example-plugin.php `. Copy the example plugin to your plugins directory for the fastest way to get started.
+##### For more examples, or help to get started see the example plugin in ` example/example-plugin.php `. Copy the example plugin to your plugins directory for the fastest way to get started.
