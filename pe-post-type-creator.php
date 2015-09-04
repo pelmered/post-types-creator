@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Post types creator
- * Description:
+ * Description: Helper plugin for easily creating localize-ready custom post types and custom taxonomies in WordPress
  * Version:     0.1.0
  * Author:      Peter Elmered
  * Text Domain: post-type-creator
