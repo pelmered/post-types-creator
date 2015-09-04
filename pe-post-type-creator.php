@@ -378,6 +378,11 @@ class PE_Post_Type_Creator {
 
     function add_admin_column( $columns, $post_type )
     {
+        if( !isset($this->post_types[$post_type]))
+        {
+            return $columns;
+        }
+
         $options = $this->post_types[$post_type];
 
         //if( is_admin() && isset($options['admin_columns']))
@@ -409,7 +414,7 @@ class PE_Post_Type_Creator {
         {
             $options = $this->post_types[ $post->post_type ];
 
-            if(is_callable($options['admin_columns'][$column_name]['cb']))
+            if( isset($options['admin_columns'][$column_name]['cb'])  && is_callable($options['admin_columns'][$column_name]['cb']))
             {
                 call_user_func_array($options['admin_columns'][$column_name]['cb'], array($post_id));
             }
