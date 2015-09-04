@@ -196,9 +196,6 @@ class PE_Post_Type_Creator {
 
             }
 
-
-
-
         }
 
     }
