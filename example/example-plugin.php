@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: Example plugin
- * Description: 
+ * Plugin Name: My Custom Posts
+ * Description: Add custom post types and taxonomies
  * Version:     0.1.0
  * Author:      Peter Elmered
  * Text Domain: example-plugin
@@ -10,29 +10,15 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt 
  */
 
-/*
- * @package   example-plugin
- * @author    Peter Elmered <peter@elmered.com>
- * @license   GPL-2.0+
- * @link      http://elmered.com
- * @copyright 2014 Peter Elmered
- *
- * @wordpress-plugin
- */
-
-
-
 add_action('plugins_loaded', 'Example_Post_Type_Creator');
 
 function Example_Post_Type_Creator()
 {
     //Needed for is_plugin_active() call
     include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-    
-    if(
-        is_plugin_active( 'pe-example-plugin/pe-example-plugin.php' ) &&
-        class_exists( 'PE_Post_Type_Creator' )
-    )
+
+    // Check that the main plugin is loaded. If not, do noting
+    if( class_exists( 'PE_Post_Type_Creator' ) )
     {
         $text_domain = 'example-plugin';
         
@@ -52,6 +38,28 @@ function Example_Post_Type_Creator()
                 
                 // Make post type drag and drop sortable in admin list view
                 'sortable'      => true,
+
+                //Custom post statuses
+                'post_statuses' => array(
+                    // 'slug' => array($args_array)
+                    // https://codex.wordpress.org/Function_Reference/register_post_status
+                    'pending'   => array(
+                        'singular_label'    => _x('Pending', 'Post status singular', $text_domain),
+                        'plural_label'      => _x('Pending', 'Post status plural', $text_domain),
+                        'public'            => true
+                    ),
+                    'active'   => array(
+                        'singular_label'    => _x('Active', 'Post status singular', $text_domain),
+                        'plural_label'      => _x('Active', 'Post status plural', $text_domain),
+                        'public'            => true
+                    ),
+                    'completed'   => array(
+                        'singular_label'    => _x('Completed', 'Post status singular', $text_domain),
+                        'plural_label'      => _x('Completed', 'Post status plural', $text_domain),
+                        'public'            => true
+                    ),
+                ),
+
                 'admin_columns' => array(
                     /*
                     'slug' => array(
