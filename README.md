@@ -1,4 +1,4 @@
-# Post-types-creator
+# Post types creator
 Helper plugin that provides an easy interface for creating fully translated custom post types and taxonomies according to best practice with only a few lines of code for WordPress.
 
 Current version need Advanced Custom Fields to be installed for sorting to work.
@@ -132,3 +132,4 @@ $ptc->set_taxonomies(array(
 add_action( 'init', array($ptc, 'init'), 0 );
 ```
 
+For more examples, or help to get started see the example plugin in ` example/example-plugin.php `. Copy the example plugin to your plugins directory for the fastest way to get started.
