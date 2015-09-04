@@ -294,6 +294,41 @@ class PE_Post_Type_Creator {
         }
     }
 
+    function append_post_status_list()
+    {
+        global $post;
+
+        if( isset( $this->post_types[$post->post_type ]['post_statuses'] ) && is_array( $this->post_types[$post->post_type ]['post_statuses'] ) )
+        {
+            echo '<script>';
+            echo 'jQuery(document).ready(function($) {';
+
+            foreach( $this->post_types[$post->post_type ]['post_statuses'] AS $post_status_slug => $post_status )
+            {
+                $label = $post_status['singular_label'];
+
+                if( $post->post_status == $post_status_slug && in_array( $post->post_status, array_keys( $this->post_types[$post->post_type ]['post_statuses'] ) ) )
+                {
+                    $selected = ' selected="selected"';
+                    ?>
+                    $(".misc-pub-section label").append(" <?php echo $label; ?>");
+                    <?php
+                }
+                else
+                {
+                    $selected = '';
+                }
+                ?>
+                $("select#post_status").append('<option value="<?php echo $post_status_slug; ?>" <?php echo $selected; ?>><?php echo $label ?></option>');
+                <?php
+            }
+
+            echo '});';
+            echo '</script>';
+
+        }
+    }
+
     function sortable_ajax_handler()
     {
         //$post_type = filter_input(INPUT_POST, 'post_type', FILTER_SANITIZE_STRING);
