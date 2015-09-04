@@ -30,37 +30,92 @@ function PE_Post_Type_Creator()
 */
 
 
-/**
- * Description of bakerhansen-image-boxes
- *
- * @author peter
- */
 class PE_Post_Type_Creator {
 
     private $plugin_slug = 'post-type-creator';
-
-    //Also edit in plugin header
     private $text_domain = 'post-type-creator';
 
     public $post_types = array();
     public $taxonomies = array();
 
+    public $use_acf = false;
+
+
+
+    function __construct( $options = array() )
+    {
+
+        if( isset( $options['text_domain'] ) )
+        {
+            $this->text_domain = $options['text_domain'];
+        }
+        if( isset( $options['use_acf'] ) && $options['use_acf'] )
+        {
+            $this->use_acf = true;
+        }
+
+    }
+
+
+    function parse_post_type_args( $post_slug, $post_type )
+    {
+        $post_type['singular_label_ucf'] = ucfirst($post_type['singular_label']);
+        $post_type['plural_label_ucf'] = ucfirst($post_type['plural_label']);
+
+        $generated_args = array(
+            'label'               => __( $post_slug, $this->text_domain ),
+            'description'         => __( $post_type['plural_label_ucf'], $this->text_domain ),
+            'labels'              => array(
+                'name'                  => _x( $post_type['plural_label_ucf'], 'Post Type General Name', $this->text_domain ),
+                'singular_name'         => _x( $post_type['singular_label_ucf'], 'Post Type Singular Name', $this->text_domain ),
+                'menu_name'             => __( $post_type['plural_label_ucf'], $this->text_domain ),
+                'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $post_type['singular_label']),
+                //'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $post_type['singular_label']),
+                'all_items'             => sprintf(__( 'All %s', $this->text_domain ), $post_type['plural_label']),
+                'view'                  => sprintf(__( 'View %s', $this->text_domain ), $post_type['singular_label']),
+                'view_item'             => sprintf(__( 'View %s', $this->text_domain ), $post_type['singular_label']),
+                'add_new'               => sprintf(__( 'Add %s', $this->text_domain ), $post_type['singular_label']),
+                'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $post_type['singular_label']),
+                'edit'                  => __( 'Edit', $this->text_domain ),
+                'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $post_type['singular_label']),
+                'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $post_type['singular_label']),
+                'search_items'          => sprintf( __('Search %s', $this->text_domain), $post_type['plural_label']),
+                'not_found'             => sprintf(__( 'No %s found', $this->text_domain ), $post_type['plural_label']),
+                'not_found_in_trash'    => sprintf(__( 'No %s found in trash', $this->text_domain ), $post_type['plural_label']),
+            ),
+        );
+
+        $default_args = array(
+            // Override some defaults to cover most cases out of the box
+            'supports'              => array( 'title', 'editor', 'thumbnail', ),
+            'taxonomies'            => array( ),
+            'public'                => true,
+            'menu_position'         => 6,   //Below posts
+            'has_archive'           => true,
+
+            //Custom
+            'admin_columns'         => array(),
+            'sortable'              => false,
+        );
+
+        return wp_parse_args(array_merge( $generated_args, $post_type ), $default_args);
+    }
 
     function set_post_types($post_types)
     {
-        $this->post_types = $post_types;
+        $parsed_post_types = array();
+
+        foreach($post_types AS $slug => $post_type) {
+            $parsed_post_types[$slug] = $this->parse_post_type_args($slug, $post_type);
+        }
+
+        $this->post_types = $parsed_post_types;
     }
 
     function set_taxonomies($taxonomies)
     {
         $this->taxonomies = $taxonomies;
     }
-    /*
-    function __construct()
-    {
-        add_action( 'init', array($this, 'init'), 0 );
-    }
-    */
 
     function init()
     {
@@ -83,58 +138,36 @@ class PE_Post_Type_Creator {
     {
         $post_types = $this->post_types;
 
-        foreach($post_types AS $slug => $post_type)
+        foreach($post_types AS $slug => $post_args)
         {
-            $post_type['singular_label_ucf'] = ucfirst($post_type['singular_label']);
-            $post_type['plural_label_ucf'] = ucfirst($post_type['plural_label']);
+            register_post_type( $slug, $post_args );
 
-            $generated_args = array(
-                'label'               => __( $slug, $this->text_domain ),
-                'description'         => __( $post_type['plural_label_ucf'], $this->text_domain ),
-                'labels'              => array(
-                    'name'                  => _x( $post_type['plural_label_ucf'], 'Post Type General Name', $this->text_domain ),
-                    'singular_name'         => _x( $post_type['singular_label_ucf'], 'Post Type Singular Name', $this->text_domain ),
-                    'menu_name'             => __( $post_type['plural_label_ucf'], $this->text_domain ),
-                    'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $post_type['singular_label']),
-                    //'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $post_type['singular_label']),
-                    'all_items'             => sprintf(__( 'All %s', $this->text_domain ), $post_type['plural_label']),
-                    'view'                  => sprintf(__( 'View %s', $this->text_domain ), $post_type['singular_label']),
-                    'view_item'             => sprintf(__( 'View %s', $this->text_domain ), $post_type['singular_label']),
-                    'add_new'               => sprintf(__( 'Add %s', $this->text_domain ), $post_type['singular_label']),
-                    'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $post_type['singular_label']),
-                    'edit'                  => __( 'Edit', $this->text_domain ),
-                    'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $post_type['singular_label']),
-                    'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $post_type['singular_label']),
-                    'search_items'          => sprintf( __('Search %s', $this->text_domain), $post_type['plural_label']),
-                    'not_found'             => sprintf(__( 'No %s found', $this->text_domain ), $post_type['plural_label']),
-                    'not_found_in_trash'    => sprintf(__( 'No %s found in trash', $this->text_domain ), $post_type['plural_label']),
-                ),
-            );
+            if( isset( $post_args['post_statuses'] ) && !empty( $post_args['post_statuses'] ) && is_array( $post_args['post_statuses'] ) )
+            {
+                foreach( $post_args['post_statuses'] AS $post_status_slug => $post_status_args )
+                {
 
-            $default_args = array(
-                // Override some defaults to cover most cases out of the box
-                'supports'              => array( 'title', 'editor', 'thumbnail', ),
-                'taxonomies'            => array( ),
-                'public'                => true,
-                'menu_position'         => 6,   //Below posts
-                'has_archive'           => true,
+                    $post_status_args['label'] = $post_status_args['singular_label'];
+                    $post_status_args['label_count'] = _n_noop(
+                        $post_status_args['singular_label'].' <span class="count">(%s)</span>',
+                        $post_status_args['plural_label'].' <span class="count">(%s)</span>',
+                        $this->text_domain
+                    ); // $post_status_args['singular_label'];
 
-                //Custom
-                'admin_columns'         => array(),
-                'sortable'              => false,
-            );
 
-            $final_args = wp_parse_args(array_merge( $generated_args, $post_type ), $default_args);
-
-            register_post_type( $slug, $final_args );
+                    register_post_status( $post_status_slug, $post_status_args );
+                }
+            }
 
             if( is_admin() )
             {
                 $current_post_type = $this->get_current_post_type();
 
-                if( isset($final_args['admin_columns']))
+                add_action( 'admin_footer-post.php', array( $this, 'append_post_status_list' ) );
+
+                if( isset($post_args['admin_columns']))
                 {
-                    foreach( $final_args['admin_columns'] AS $column )
+                    foreach( $post_args['admin_columns'] AS $column )
                     {
                         add_filter( 'manage_posts_columns' , array($this, 'add_admin_column'), 10, 2 );
                         //add_filter( 'manage_'.$slug.'_posts_columns' , array($this, 'add_admin_column'), 10, 2 );
@@ -143,7 +176,7 @@ class PE_Post_Type_Creator {
                     }
                 }
 
-                if( $final_args['sortable'] &&
+                if( $post_args['sortable'] &&
                     //in_array( $current_post_type, array_keys( $this->post_types ) ) &&
                     isset($this->post_types[$current_post_type]['sortable']) &&
                     $this->post_types[$current_post_type]['sortable'] == true
