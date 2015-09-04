@@ -10,25 +10,6 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-/*
- * @package   post-type-creator
- * @author    Peter Elmered <peter@elmered.com>
- * @license   GPL-2.0+
- * @link      http://elmered.com
- * @copyright 2014 Peter Elmered
- *
- * @wordpress-plugin
- */
-
-/*
-add_action('plugins_loaded', 'PE_Post_Type_Creator', 1);
-
-function PE_Post_Type_Creator()
-{
-    new PE_Post_Type_Creator();
-}
-*/
-
 
 class PE_Post_Type_Creator {
 
@@ -39,7 +20,6 @@ class PE_Post_Type_Creator {
     public $taxonomies = array();
 
     public $use_acf = false;
-
 
 
     function __construct( $options = array() )
@@ -55,7 +35,6 @@ class PE_Post_Type_Creator {
         }
 
     }
-
 
     function parse_post_type_args( $post_slug, $post_type )
     {
@@ -121,16 +100,12 @@ class PE_Post_Type_Creator {
     {
         add_action( 'wp_ajax_pe_ptc_sort_posts', array($this, 'sortable_ajax_handler') );
 
-
         $this->load_plugin_textdomain();
-
         $this->register_post_types();
-
         $this->register_taxonomies();
 
         add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );
 
-        //add sort to get_terms()
         add_filter('get_terms_orderby', array( $this, 'sort_get_terms' ), 10, 3 );
     }
 
@@ -328,7 +303,6 @@ class PE_Post_Type_Creator {
 
     function sortable_ajax_handler()
     {
-        //$post_type = filter_input(INPUT_POST, 'post_type', FILTER_SANITIZE_STRING);
         parse_str(filter_input(INPUT_POST, 'post_data', FILTER_SANITIZE_STRING), $post_data );
 
         $post_type = filter_input(INPUT_POST, 'post_type', FILTER_SANITIZE_STRING);
@@ -381,8 +355,6 @@ class PE_Post_Type_Creator {
         }
 
         $options = $this->post_types[$post_type];
-
-        //if( is_admin() && isset($options['admin_columns']))
 
         foreach($options['admin_columns'] AS $slug => $data)
         {
