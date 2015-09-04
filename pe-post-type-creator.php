@@ -185,7 +185,7 @@ class PE_Post_Type_Creator {
                     /**
                      * Make post list in admin sorted without meta value
                      */
-                    //add_filter('pre_get_posts', array( $this, 'sort_admin_post_list' ) );
+                    add_filter('pre_get_posts', array( $this, 'sort_admin_post_list' ) );
 
                     wp_enqueue_script('jquery-ui-core');
                     wp_enqueue_script('jquery-ui-sortable');
@@ -215,7 +215,7 @@ class PE_Post_Type_Creator {
     {
         $taxonomy = $taxonomies[0];
 
-        if(array_key_exists( $taxonomy, $this->taxonomies) && $this->taxonomies[$taxonomy]['sortable'] )
+        if(array_key_exists( $taxonomy, $this->taxonomies) && isset($this->taxonomies[$taxonomy]['sortable']) )
         {
             $order = get_option('taxonomy_order_'.$taxonomy, array());
 
