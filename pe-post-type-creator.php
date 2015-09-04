@@ -233,8 +233,16 @@ class PE_Post_Type_Creator {
     {
         if(in_array($post->post_type , $this->post_types) && $this->post_types[$post->post_type]['sortable'] )
         {
-            update_field('sort', apply_filters('pe_ptc_sort_default', 99, $post_id, $post, $update ), $post_id);
-            //update_post_meta( $post_id, 'sort', apply_filters('pe_ptc_sort_default', 99, $post_id, $post, $update ));
+            $sort_value = apply_filters('pe_ptc_sort_default', 99, $post_id, $post, $update );
+
+            if( $this->use_acf )
+            {
+                update_field('sort', $sort_value, $post_id);
+            }
+            else
+            {
+                update_post_meta( $post_id, 'sort', $sort_value);
+            }
         }
     }
 
@@ -305,10 +313,18 @@ class PE_Post_Type_Creator {
 
         if( isset($post_data['post']) && is_array($post_data['post']))
         {
-            foreach( $post_data['post'] AS $tag_id )
+            foreach( $post_data['post'] AS $post_id )
             {
-                update_field('sort', $i++, $tag_id);
-                //update_post_meta($p, 'pe_ptc_sort', $i++);
+
+                if( $this->use_acf )
+                {
+                    update_field('sort', $i++, $post_id);
+                }
+                else
+                {
+                    update_post_meta($post_id, 'sort', $i++);
+                }
+
             }
         }
         if( isset($post_data['tag']) && is_array($post_data['tag']))
