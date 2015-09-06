@@ -41,6 +41,7 @@ Add the repository and add ` pelmered/post-types-creator ` to the require sectio
   }
 }
 ```
+Note: Edit the installer paths to reflect your installation
 
 ###Normal manual install
 First, install the plugin as usnual by uploading the plugin to you plugins folder, typically ` wp-content/plugins/  `.
@@ -55,6 +56,11 @@ Secondly, copy the example plugin file from ` example/example-plugin.php ` in th
 Registers a post type with the slug ` stores ` and the labels tranlatable based on ` Post type plural ` (plural) and ` Post type singular ` (singular).
 
 ```php
+$options = array(
+  // Use ACF for storing meta data
+  'use_acf' => true
+);
+
 $ptc = new PE_Post_Type_Creator();
 $text_domain = 'text-domain';
         
