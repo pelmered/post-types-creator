@@ -1,4 +1,4 @@
-# Post-types-creator
+# Post types creator
 Helper plugin that provides an easy interface for creating fully translated custom post types and taxonomies according to best practice with only a few lines of code for WordPress.
 
 Current version need Advanced Custom Fields to be installed for sorting to work.
@@ -10,8 +10,11 @@ Current version need Advanced Custom Fields to be installed for sorting to work.
   - English
   - Swedish
   - Norwegian
+  - Plase help me to add more! 
 - Custom columns in admin with only a few lines of code
+- easily add custom post statuses
 - Drag & drop sortable (drag and drop in the normal list view in WP Admin for both posts and taxonomies/terms)
+- Integration with Advanced Custom Fields(optional)
 
 
 ##Install and Usage
@@ -38,6 +41,7 @@ Add the repository and add ` pelmered/post-types-creator ` to the require sectio
   }
 }
 ```
+Note: Edit the installer paths to reflect your installation
 
 ###Normal manual install
 First, install the plugin as usnual by uploading the plugin to you plugins folder, typically ` wp-content/plugins/  `.
@@ -52,6 +56,11 @@ Secondly, copy the example plugin file from ` example/example-plugin.php ` in th
 Registers a post type with the slug ` stores ` and the labels tranlatable based on ` Post type plural ` (plural) and ` Post type singular ` (singular).
 
 ```php
+$options = array(
+  // Use ACF for storing meta data
+  'use_acf' => true
+);
+
 $ptc = new PE_Post_Type_Creator();
 $text_domain = 'text-domain';
         
@@ -132,3 +141,4 @@ $ptc->set_taxonomies(array(
 add_action( 'init', array($ptc, 'init'), 0 );
 ```
 
+##### For more examples, or help to get started see the example plugin in ` example/example-plugin.php `. Copy the example plugin to your plugins directory for the fastest way to get started.
