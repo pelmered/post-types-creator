@@ -256,7 +256,11 @@ class PE_Post_Type_Creator {
 
     function get_current_taxonomy( $post_type = '' )
     {
-        if( isset( $_REQUEST['taxonomy'] ) && ( empty($post_type) || ( isset($_REQUEST['post_type']) && $_REQUEST['post_type'] == $post_type ) ) )
+        if( isset( $_REQUEST['taxonomy'] ) &&
+            ( empty($post_type) ||
+                ( isset($_REQUEST['post_type']) && $_REQUEST['post_type'] == $post_type ) ||
+                ( isset($_REQUEST['post_type']) && in_array( $_REQUEST['post_type'], $post_type ) )
+            ) )
         {
             return sanitize_key( $_REQUEST['taxonomy'] );
         }
@@ -396,51 +400,57 @@ class PE_Post_Type_Creator {
 
         foreach($taxonomies AS $slug => $taxonomy)
         {
-            $taxonomy['singular_label_ucf'] = ucfirst($taxonomy['singular_label']);
-            $taxonomy['plural_label_ucf'] = ucfirst($taxonomy['plural_label']);
+            if( !isset($taxonomy['register']) || $taxonomy['register'] !== false )
+            {
+                $taxonomy['singular_label_ucf'] = ucfirst($taxonomy['singular_label']);
+                $taxonomy['plural_label_ucf'] = ucfirst($taxonomy['plural_label']);
 
-            $args = array(
-                'label'               => __( $slug, $this->text_domain ),
-                'description'         => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
-                'labels'              => array(
-                    'name'                  => _x( $taxonomy['plural_label_ucf'], 'Taxonomy General Name', $this->text_domain ),
-                    'singular_name'         => _x( $taxonomy['singular_label_ucf'], 'Taxonomy Singular Name', $this->text_domain ),
-                    'menu_name'             => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
-                    'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['singular_label']),
-                    'parent_item'           => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['singular_label']),
-                    'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $taxonomy['singular_label']),
-                    'new_item_name'         => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['singular_label']),
-                    'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['singular_label']),
-                    'edit'                  => __( 'Edit', $this->text_domain ),
-                    'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $taxonomy['singular_label']),
-                    'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $taxonomy['singular_label']),
-                    //'separate_items_with_commas' => __( 'Separate items with commas', $this->text_domain ),
-                    'search_items'          => sprintf( __('Search %s', $this->text_domain), $taxonomy['plural_label']),
-                    'add_or_remove_items'   => __( 'Add or remove %s', $taxonomy['plural_label'] ),
-                    'choose_from_most_used' => __( 'Choose from the most used items', 'woocommerce-as400' ),
-                    'not_found'             => sprintf(__( 'No %s found', $this->text_domain ), $taxonomy['plural_label']),
-                ),
-            );
+                $args = array(
+                    'label'               => __( $slug, $this->text_domain ),
+                    'description'         => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
+                    'labels'              => array(
+                        'name'                  => _x( $taxonomy['plural_label_ucf'], 'Taxonomy General Name', $this->text_domain ),
+                        'singular_name'         => _x( $taxonomy['singular_label_ucf'], 'Taxonomy Singular Name', $this->text_domain ),
+                        'menu_name'             => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
+                        'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['singular_label']),
+                        'parent_item'           => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['singular_label']),
+                        'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $taxonomy['singular_label']),
+                        'new_item_name'         => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['singular_label']),
+                        'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['singular_label']),
+                        'edit'                  => __( 'Edit', $this->text_domain ),
+                        'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $taxonomy['singular_label']),
+                        'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $taxonomy['singular_label']),
+                        //'separate_items_with_commas' => __( 'Separate items with commas', $this->text_domain ),
+                        'search_items'          => sprintf( __('Search %s', $this->text_domain), $taxonomy['plural_label']),
+                        'add_or_remove_items'   => __( 'Add or remove %s', $taxonomy['plural_label'] ),
+                        'choose_from_most_used' => __( 'Choose from the most used items', 'woocommerce-as400' ),
+                        'not_found'             => sprintf(__( 'No %s found', $this->text_domain ), $taxonomy['plural_label']),
+                    ),
+                );
 
-            $default_args = array(
-                'hierarchical'               => true,
-                'public'                     => true,
-                'show_ui'                    => true,
-                'show_admin_column'          => true,
-                'show_in_nav_menus'          => true,
-                'show_tagcloud'              => true,
+                $default_args = array(
+                    'hierarchical'               => true,
+                    'public'                     => true,
+                    'show_ui'                    => true,
+                    'show_admin_column'          => true,
+                    'show_in_nav_menus'          => true,
+                    'show_tagcloud'              => true,
 
-                //Custom
-                'sortable'              => false,
-            );
+                    //Custom
+                    'sortable'              => false,
+                );
 
-            $final_args = wp_parse_args(array_merge($taxonomy, $args), $default_args);
+                $final_args = wp_parse_args(array_merge($taxonomy, $args), $default_args);
 
-            register_taxonomy( $slug, $taxonomy['post_type'], $final_args );
+                register_taxonomy( $slug, $taxonomy['post_type'], $final_args );
+            }
+            else
+            {
+                $final_args = $taxonomy;
+            }
 
             if( is_admin() )
             {
-
                 $current_taxonomy = $this->get_current_taxonomy( $taxonomy['post_type'] );
 
                 if( isset($final_args['admin_fields']))
