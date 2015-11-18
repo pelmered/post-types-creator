@@ -256,11 +256,7 @@ class PE_Post_Type_Creator {
 
     function get_current_taxonomy( $post_type = '' )
     {
-        if( isset( $_REQUEST['taxonomy'] ) &&
-            ( empty($post_type) ||
-                ( isset($_REQUEST['post_type']) && $_REQUEST['post_type'] == $post_type ) ||
-                ( isset($_REQUEST['post_type']) && in_array( $_REQUEST['post_type'], $post_type ) )
-            ) )
+        if( isset( $_REQUEST['taxonomy'] ) && ( empty($post_type) || $_REQUEST['post_type'] == $post_type ) )
         {
             return sanitize_key( $_REQUEST['taxonomy'] );
         }
