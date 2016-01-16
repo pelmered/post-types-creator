@@ -1,34 +1,33 @@
 <?php
 /**
- * Plugin Name: My Custom Posts
- * Description: Add custom post types and taxonomies
+ * Plugin Name: My Custom Post types and taxonomies
+ * Description: Adds custom post types and taxonomies for my project
  * Version:     0.1.0
  * Author:      Peter Elmered
- * Text Domain: example-plugin
+ * Text Domain: my-custom-post-types
  * Domain Path: /languages
  * License:     GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt 
  */
 
-add_action('plugins_loaded', 'Example_Post_Type_Creator');
+add_action('plugins_loaded', 'My_Post_Type_Creator');
 
-function Example_Post_Type_Creator()
+function My_Post_Type_Creator()
 {
-    //Needed for is_plugin_active() call
-    include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-
     // Check that the main plugin is loaded. If not, do noting
     if( class_exists( 'PE_Post_Type_Creator' ) )
     {
-        $text_domain = 'example-plugin';
-        
+        $text_domain = 'my-custom-post-types';
+
+        $locale = apply_filters( 'plugin_locale', get_locale(), $text_domain );
+        load_plugin_textdomain( $text_domain, false, plugin_basename( dirname( __FILE__ ) ) . "/languages" );
         
         $ptc = new PE_Post_Type_Creator();
         
         $ptc->set_post_types(array(
             'stores' => array(
-                'singular_label' => _x('butikk', 'Post type plural', $text_domain),
-                'plural_label'  => _x('butikker', 'Post type singular', $text_domain),
+                'singular_label' => _x('store', 'Post type singular', $text_domain),
+                'plural_label'  => _x('stores', 'Post type plural', $text_domain),
                 'description'   => _x('', 'Post type description', $text_domain),
                 
                 // Override any defaults from register_post_type()
@@ -37,7 +36,7 @@ function Example_Post_Type_Creator()
                 'taxonomies'          => array( 'area' ),
                 
                 // Make post type drag and drop sortable in admin list view
-                'sortable'      => true,
+                'sortable'      => false,
 
                 //Custom post statuses
                 'post_statuses' => array(
@@ -68,16 +67,16 @@ function Example_Post_Type_Creator()
                     )
                      */
                     'featured_image' => array(
-                        'label'     => 'Image',
-                        'location'  => 2,
+                        'label'     => 'Logo',
+                        'location'  => 2, // Position of column. 2 = second, after post title
                         // Callback for outputting content. gets post ID as argument
                         'cb'        => 'example_get_featured_image_column'
                     )
                 )
             ),
             'employees' => array(
-                'singular_label' => _x('employee', 'Post type plural', $text_domain),
-                'plural_label'  => _x('employees', 'Post type singular', $text_domain),
+                'singular_label' => _x('employee', 'Post type singular', $text_domain),
+                'plural_label'  => _x('employees', 'Post type plural', $text_domain),
                 'description'   => _x('', 'Post type description', $text_domain),
                 
                 // Override any defaults from register_post_type()
@@ -88,20 +87,19 @@ function Example_Post_Type_Creator()
         
         $ptc->set_taxonomies(array(
             'area' => array(
-                'singular_label' => _x('area', 'Post type plural', $text_domain),
-                'plural_label'  => _x('areas', 'Post type singular', $text_domain),
+                'singular_label'  => _x('area', 'Taxonomy name singular', $text_domain),
+                'plural_label' => _x('areas', 'Taxonomy name plural', $text_domain),
                 'description'   => _x('', 'Post type description', $text_domain),
                 'post_type'    => 'stores',
                 
                 
                 // Override any defaults from register_taxonomy()
                 // http://codex.wordpress.org/Function_Reference/register_taxonomy
-                
-                
+                'hierarchical' => true
             ),
             'business_unit' => array(
-                'singular_label' => _x('Business unit', 'Post type plural', $text_domain),
-                'plural_label'  => _x('Business units', 'Post type singular', $text_domain),
+                'singular_label'  => _x('business unit', 'Taxonomy name singular', $text_domain),
+                'plural_label' => _x('business units', 'Taxonomy name plural', $text_domain),
                 'description'   => _x('Business unit for categorizing the employees', 'Post type description', $text_domain),
                 'post_type'    => 'employees'
             )
