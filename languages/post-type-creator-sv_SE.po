@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Post types creator v0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: Sat Jan 16 2016 21:16:27 GMT+0100 (CET)\n"
+"PO-Revision-Date: Sat Jan 16 2016 21:41:38 GMT+0100 (CET)\n"
 "Last-Translator: angrycreative <dev@angrycreative.se>\n"
 "Language-Team: \n"
 "Language: Swedish\n"
@@ -25,18 +25,6 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Textdomain-Support: yes\n"
 "X-Loco-Target-Locale: sv_SE"
-
-#. Description of the plugin
-msgid ""
-"Helper plugin for easily creating localize-ready custom post types and "
-"custom taxonomies with extra functionality in WordPress"
-msgstr ""
-"Ett plugin som hjälper dig att snabbt och enkelt skapa översättningsbara "
-"posttyper och taxonomier med extra funktioner i WordPress"
-
-#: ../pe-post-type-creator.php:422
-msgid "Choose from the most used items"
-msgstr "Välj från de mest använda"
 
 #: ../example/example-plugin.php:30
 msgctxt "Post type plural"
@@ -112,6 +100,18 @@ msgstr ""
 msgctxt "Post type description"
 msgid "Business unit for categorizing the employees"
 msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Helper plugin for easily creating localize-ready custom post types and "
+"custom taxonomies with extra functionality in WordPress"
+msgstr ""
+"Ett plugin som hjälper dig att snabbt och enkelt skapa översättningsbara "
+"posttyper och taxonomier med extra funktioner i WordPress"
+
+#: ../pe-post-type-creator.php:422
+msgid "Choose from the most used items"
+msgstr "Välj från de mest använda"
 
 #. translators: plugin header field 'Name'
 msgid "Post types creator"
