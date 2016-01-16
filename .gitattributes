@@ -1,0 +1,12 @@
+
+# Deal with line endings properly
+# Read more: https://help.github.com/articles/dealing-with-line-endings/
+
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary
+*.gif binary
+*.mo binary
