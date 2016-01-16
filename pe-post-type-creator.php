@@ -24,7 +24,6 @@ class PE_Post_Type_Creator {
 
     function __construct( $options = array() )
     {
-
         if( isset( $options['text_domain'] ) )
         {
             $this->text_domain = $options['text_domain'];
@@ -35,6 +34,66 @@ class PE_Post_Type_Creator {
         }
 
         $this->load_plugin_textdomain();
+    }
+
+    function init()
+    {
+        add_action( 'wp_ajax_pe_ptc_sort_posts', array($this, 'sortable_ajax_handler') );
+
+        $this->register_post_types();
+        $this->register_taxonomies();
+
+        add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );
+
+        add_filter('get_terms_orderby', array( $this, 'sort_get_terms' ), 10, 3 );
+    }
+
+    public function force_reinitialize()
+    {
+        add_action( 'init', array( $this, 'force_reinitialize2' ) );
+    }
+
+    public function force_reinitialize2()
+    {
+        global $wp_rewrite;
+
+        $wp_rewrite->flush_rules();
+
+        foreach( $this->post_types AS $post_slug => $post_args )
+        {
+
+            if( isset($post_args['sortable']) && $post_args['sortable'] )
+            {
+                $sort_meta_key = apply_filters( 'pe_ptc_sort_meta_key', 'sort', $post_slug );
+
+                //delete_post_meta_by_key( $sort_meta_key );
+
+                $args = array(
+                    'posts_per_page'   => -1,
+                    'post_type'        => $post_slug,
+                    'post_status'      => 'publish',
+                );
+                $posts = get_posts( $args );
+
+                $sort_value = 1;
+
+                foreach( $posts AS $post )
+                {
+                    $current = get_post_meta( $post->ID, $sort_meta_key, true );
+
+                    var_dump($current);
+
+                    if( empty( $current ) )
+                    {
+                        var_dump('$sort_value');
+                        var_dump($sort_value);
+                        delete_post_meta( $post->ID, $sort_meta_key );
+                        update_post_meta( $post->ID, $sort_meta_key, $sort_value++ );
+                    }
+
+                }
+            }
+        }
     }
 
     function parse_post_type_args( $post_slug, $post_type )
@@ -81,33 +140,78 @@ class PE_Post_Type_Creator {
         return wp_parse_args(array_merge( $generated_args, $post_type ), $default_args);
     }
 
+    function parse_taxonomy_args( $taxonomy_slug, $taxonomy )
+    {
+        $taxonomy['singular_label_ucf'] = ucfirst($taxonomy['singular_label']);
+        $taxonomy['plural_label_ucf'] = ucfirst($taxonomy['plural_label']);
+
+        $generated_args = array(
+            'label'               => __( $taxonomy_slug, $this->text_domain ),
+            'description'         => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
+            'labels'              => array(
+                'name'                  => _x( $taxonomy['plural_label_ucf'], 'Taxonomy General Name', $this->text_domain ),
+                'singular_name'         => _x( $taxonomy['singular_label_ucf'], 'Taxonomy Singular Name', $this->text_domain ),
+                'menu_name'             => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
+                'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['singular_label']),
+                'parent_item'           => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['singular_label']),
+                'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $taxonomy['singular_label']),
+                'new_item_name'         => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['singular_label']),
+                'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['singular_label']),
+                'edit'                  => __( 'Edit', $this->text_domain ),
+                'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $taxonomy['singular_label']),
+                'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $taxonomy['singular_label']),
+                //'separate_items_with_commas' => __( 'Separate items with commas', $this->text_domain ),
+                'search_items'          => sprintf( __('Search %s', $this->text_domain), $taxonomy['plural_label']),
+                'add_or_remove_items'   => __( 'Add or remove %s', $taxonomy['plural_label'] ),
+                'choose_from_most_used' => __( 'Choose from the most used items', $this->text_domain ),
+                'not_found'             => sprintf(__( 'No %s found', $this->text_domain ), $taxonomy['plural_label']),
+            ),
+        );
+
+        $default_args = array(
+            'hierarchical'               => true,
+            'public'                     => true,
+            'show_ui'                    => true,
+            'show_admin_column'          => true,
+            'show_in_nav_menus'          => true,
+            'show_tagcloud'              => true,
+
+            //Custom
+            'sortable'              => false,
+
+            // register_taxonomy overrides
+            // https://codex.wordpress.org/Function_Reference/register_taxonomy
+            'rewrite' => array(
+                'slug' => sanitize_title($taxonomy['plural_label']),
+            )
+        );
+
+        return wp_parse_args(array_merge( $generated_args, $taxonomy ), $default_args);
+    }
+
     function set_post_types($post_types)
     {
         $parsed_post_types = array();
 
-        foreach($post_types AS $slug => $post_type) {
+        foreach( $post_types AS $slug => $post_type ) {
             $parsed_post_types[$slug] = $this->parse_post_type_args($slug, $post_type);
         }
 
         $this->post_types = $parsed_post_types;
     }
 
+
     function set_taxonomies($taxonomies)
     {
-        $this->taxonomies = $taxonomies;
+        $parsed_taxonomies = array();
+
+        foreach( $taxonomies AS $slug => $post_type ) {
+            $parsed_taxonomies[$slug] = $this->parse_taxonomy_args($slug, $post_type);
+        }
+
+        $this->taxonomies = $parsed_taxonomies;
     }
 
-    function init()
-    {
-        add_action( 'wp_ajax_pe_ptc_sort_posts', array($this, 'sortable_ajax_handler') );
-
-        $this->register_post_types();
-        $this->register_taxonomies();
-
-        add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );
-
-        add_filter('get_terms_orderby', array( $this, 'sort_get_terms' ), 10, 3 );
-    }
 
     function register_post_types()
     {
@@ -128,7 +232,6 @@ class PE_Post_Type_Creator {
                         $post_status_args['plural_label'].' <span class="count">(%s)</span>',
                         $this->text_domain
                     ); // $post_status_args['singular_label'];
-
 
                     register_post_status( $post_status_slug, $post_status_args );
                 }
@@ -168,9 +271,60 @@ class PE_Post_Type_Creator {
                     wp_enqueue_script('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/js/sortable.js', array('jquery', 'jquery-ui-core', 'jquery-ui-sortable'));
                     wp_enqueue_style('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/css/sortable.css', array());
                 }
+                else
+                {
+                    $this->post_types[$slug]['sortable'] = false;
+                }
 
             }
 
+        }
+
+    }
+
+    function register_taxonomies()
+    {
+        $taxonomies = $this->taxonomies;
+
+        foreach($taxonomies AS $slug => $taxonomy_args)
+        {
+            register_taxonomy( $slug, $taxonomy_args['post_type'], $taxonomy_args );
+
+            if( is_admin() )
+            {
+                $current_taxonomy = $this->get_current_taxonomy( $taxonomy_args['post_type'] );
+
+                if( $taxonomy_args['sortable'] &&
+                    //in_array( $current_post_type, array_keys( $this->post_types ) ) &&
+                    isset($this->taxonomies[$current_taxonomy]['sortable']) &&
+                    $this->taxonomies[$current_taxonomy]['sortable'] == true
+                )
+                {
+                    /**
+                     * Make post list in admin sorted with out meta value
+                     */
+                    //add_filter('pre_get_posts', array( $this, 'sort_admin_tax_list' ) );
+
+                    /**
+                     * Show all terms on the same page. Needed for sortable to work.
+                     */
+                    // TODO: Better solution if there are many terms needed.
+                    add_filter( 'edit_' . $slug . '_per_page', function() {
+                        return 999999999;
+                    } );
+
+                    wp_enqueue_script('jquery-ui-core');
+                    wp_enqueue_script('jquery-ui-sortable');
+
+                    wp_enqueue_script('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/js/sortable.js', array('jquery', 'jquery-ui-core', 'jquery-ui-sortable'));
+                    wp_enqueue_style('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/css/sortable.css', array());
+                }
+                else
+                {
+                    $this->taxonomies[$slug]['sortable'] = false;
+                }
+
+            }
         }
 
     }
@@ -207,21 +361,25 @@ class PE_Post_Type_Creator {
         {
             $sort_value = apply_filters('pe_ptc_sort_default', 99, $post_id, $post, $update );
 
+            $sort_meta_key = apply_filters( 'pe_ptc_sort_meta_key', 'sort', $post->post_type );
+
             if( $this->use_acf )
             {
-                update_field('sort', $sort_value, $post_id);
+                update_field( $sort_meta_key, $sort_value, $post_id );
             }
             else
             {
-                update_post_meta( $post_id, 'sort', $sort_value);
+                update_post_meta( $post_id, $sort_meta_key, $sort_value );
             }
         }
     }
 
     function sort_admin_post_list( $wp_query )
     {
+        $sort_meta_key = apply_filters( 'pe_ptc_sort_meta_key', 'sort', $wp_query->query_vars['post_type'] );
+
         $wp_query->set( 'orderby', 'meta_value_num' );
-        $wp_query->set( 'meta_key', 'sort' );
+        $wp_query->set( 'meta_key', $sort_meta_key );
         $wp_query->set( 'order', 'ASC' );
 
         return $wp_query;
@@ -308,7 +466,7 @@ class PE_Post_Type_Creator {
         $post_type = filter_input(INPUT_POST, 'post_type', FILTER_SANITIZE_STRING);
         $taxonomy = filter_input(INPUT_POST, 'taxonomy', FILTER_SANITIZE_STRING);
 
-        $i = 0;
+        $i = 1;
 
         // TODO
         // Sorted taxonomies not supported yes
@@ -319,16 +477,17 @@ class PE_Post_Type_Creator {
 
         if( isset($post_data['post']) && is_array($post_data['post']))
         {
+            $sort_meta_key = apply_filters( 'pe_ptc_sort_meta_key', 'sort', $post_type );
+
             foreach( $post_data['post'] AS $post_id )
             {
-
                 if( $this->use_acf )
                 {
-                    update_field('sort', $i++, $post_id);
+                    update_field( $sort_meta_key, $i++, $post_id );
                 }
                 else
                 {
-                    update_post_meta($post_id, 'sort', $i++);
+                    update_post_meta( $post_id, $sort_meta_key, $i++ );
                 }
 
             }
@@ -342,6 +501,8 @@ class PE_Post_Type_Creator {
                 update_option( 'taxonomy_order_'.$taxonomy , $post_data['tag'] );
             }
         }
+
+        wp_send_json( array( 'status' => 'ok' ) );
 
         die();
     }
@@ -390,110 +551,8 @@ class PE_Post_Type_Creator {
         }
     }
 
-    function register_taxonomies()
-    {
-        $taxonomies = $this->taxonomies;
 
-        foreach($taxonomies AS $slug => $taxonomy)
-        {
-            if( !isset($taxonomy['register']) || $taxonomy['register'] !== false )
-            {
-                $taxonomy['singular_label_ucf'] = ucfirst($taxonomy['singular_label']);
-                $taxonomy['plural_label_ucf'] = ucfirst($taxonomy['plural_label']);
 
-                $args = array(
-                    'label'               => __( $slug, $this->text_domain ),
-                    'description'         => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
-                    'labels'              => array(
-                        'name'                  => _x( $taxonomy['plural_label_ucf'], 'Taxonomy General Name', $this->text_domain ),
-                        'singular_name'         => _x( $taxonomy['singular_label_ucf'], 'Taxonomy Singular Name', $this->text_domain ),
-                        'menu_name'             => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
-                        'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['singular_label']),
-                        'parent_item'           => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['singular_label']),
-                        'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $taxonomy['singular_label']),
-                        'new_item_name'         => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['singular_label']),
-                        'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['singular_label']),
-                        'edit'                  => __( 'Edit', $this->text_domain ),
-                        'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $taxonomy['singular_label']),
-                        'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $taxonomy['singular_label']),
-                        //'separate_items_with_commas' => __( 'Separate items with commas', $this->text_domain ),
-                        'search_items'          => sprintf( __('Search %s', $this->text_domain), $taxonomy['plural_label']),
-                        'add_or_remove_items'   => __( 'Add or remove %s', $taxonomy['plural_label'] ),
-                        'choose_from_most_used' => __( 'Choose from the most used items', $this->text_domain ),
-                        'not_found'             => sprintf(__( 'No %s found', $this->text_domain ), $taxonomy['plural_label']),
-                    ),
-                );
-
-                $default_args = array(
-                    'hierarchical'               => true,
-                    'public'                     => true,
-                    'show_ui'                    => true,
-                    'show_admin_column'          => true,
-                    'show_in_nav_menus'          => true,
-                    'show_tagcloud'              => true,
-
-                    //Custom
-                    'sortable'              => false,
-
-                    // register_taxonomy overrides
-                    // https://codex.wordpress.org/Function_Reference/register_taxonomy
-                    'rewrite' => array(
-                        'slug' => sanitize_title($taxonomy['plural_label']),
-                    )
-                );
-
-                $final_args = wp_parse_args(array_merge($taxonomy, $args), $default_args);
-
-                register_taxonomy( $slug, $taxonomy['post_type'], $final_args );
-            }
-            else
-            {
-                $final_args = $taxonomy;
-            }
-
-            if( is_admin() )
-            {
-                $current_taxonomy = $this->get_current_taxonomy( $taxonomy['post_type'] );
-
-                if( isset($final_args['admin_fields']))
-                {
-                    //TODO
-                }
-
-                if( $final_args['sortable'] &&
-                    //in_array( $current_post_type, array_keys( $this->post_types ) ) &&
-                    isset($this->taxonomies[$current_taxonomy]['sortable']) &&
-                    $this->taxonomies[$current_taxonomy]['sortable'] == true
-                )
-                {
-                    /**
-                     * Make post list in admin sorted with out meta value
-                     */
-                    //add_filter('pre_get_posts', array( $this, 'sort_admin_tax_list' ) );
-
-                    /**
-                     * Show all terms on the same page. Needed for sortable to work.
-                     */
-                    // TODO: Better solution if there are many terms needed.
-                    add_filter( 'edit_' . $slug . '_per_page', function() {
-                        return 999999999;
-                    } );
-
-                    wp_enqueue_script('jquery-ui-core');
-                    wp_enqueue_script('jquery-ui-sortable');
-
-                    wp_enqueue_script('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/js/sortable.js', array('jquery', 'jquery-ui-core', 'jquery-ui-sortable'));
-                    wp_enqueue_style('pe-post-type-creator-sortable', plugins_url('', __FILE__) . '/assets/css/sortable.css', array());
-                }
-                else
-                {
-                    $this->taxonomies[$slug]['sortable'] = false;
-                }
-
-            }
-        }
-
-    }
 
     /**
      * Load Localisation files.
@@ -515,3 +574,4 @@ class PE_Post_Type_Creator {
 
 
 }
+
