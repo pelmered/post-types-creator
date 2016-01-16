@@ -3,167 +3,194 @@ msgstr ""
 "Project-Id-Version: Post types creator v0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-02-20 21:24:06+0000\n"
-"Last-Translator: admin <web@optimalnorge.no>\n"
+"PO-Revision-Date: Sat Jan 16 2016 21:16:27 GMT+0100 (CET)\n"
+"Last-Translator: angrycreative <dev@angrycreative.se>\n"
 "Language-Team: \n"
+"Language: Swedish\n"
+"Plural-Forms: nplurals=2; plural=n != 1\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: CSL v1.x\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Loco - https://localise.biz/\n"
 "X-Poedit-Language: Swedish\n"
 "X-Poedit-Country: SWEDEN\n"
-"X-Poedit-SourceCharset: utf-8\n"
-"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;"
+"__:1;_e:1;_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;"
+"_x:1,2c;_ex:1,2c;_nx:1,2,4c;_nx_noop:1,2,3c;_n_js:1,2;_nx_js:1,2,3c;"
+"esc_attr__:1;esc_html__:1;esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;"
+"esc_html_x:1,2c;comments_number_link:2,3;t:1;st:1;trans:1;transChoice:1,2\n"
 "X-Poedit-Basepath: ../\n"
 "X-Poedit-Bookmarks: \n"
 "X-Poedit-SearchPath-0: .\n"
-"X-Textdomain-Support: yes"
+"X-Textdomain-Support: yes\n"
+"X-Loco-Target-Locale: sv_SE"
+
+#. Description of the plugin
+msgid ""
+"Helper plugin for easily creating localize-ready custom post types and "
+"custom taxonomies with extra functionality in WordPress"
+msgstr ""
+"Ett plugin som hjälper dig att snabbt och enkelt skapa översättningsbara "
+"posttyper och taxonomier med extra funktioner i WordPress"
+
+#: ../pe-post-type-creator.php:422
+msgid "Choose from the most used items"
+msgstr "Välj från de mest använda"
+
+#: ../example/example-plugin.php:30
+msgctxt "Post type plural"
+msgid "butikk"
+msgstr ""
+
+#: ../example/example-plugin.php:31
+msgctxt "Post type singular"
+msgid "butikker"
+msgstr ""
+
+#: ../example/example-plugin.php:47
+msgctxt "Post status singular"
+msgid "Pending"
+msgstr ""
+
+#: ../example/example-plugin.php:48
+msgctxt "Post status plural"
+msgid "Pending"
+msgstr ""
+
+#: ../example/example-plugin.php:52
+msgctxt "Post status singular"
+msgid "Active"
+msgstr ""
+
+#: ../example/example-plugin.php:53
+msgctxt "Post status plural"
+msgid "Active"
+msgstr ""
+
+#: ../example/example-plugin.php:57
+msgctxt "Post status singular"
+msgid "Completed"
+msgstr ""
+
+#: ../example/example-plugin.php:58
+msgctxt "Post status plural"
+msgid "Completed"
+msgstr ""
+
+#: ../example/example-plugin.php:79
+msgctxt "Post type plural"
+msgid "employee"
+msgstr ""
+
+#: ../example/example-plugin.php:80
+msgctxt "Post type singular"
+msgid "employees"
+msgstr ""
+
+#: ../example/example-plugin.php:91
+msgctxt "Post type plural"
+msgid "area"
+msgstr ""
+
+#: ../example/example-plugin.php:92
+msgctxt "Post type singular"
+msgid "areas"
+msgstr ""
+
+#: ../example/example-plugin.php:103
+msgctxt "Post type plural"
+msgid "Business unit"
+msgstr ""
+
+#: ../example/example-plugin.php:104
+msgctxt "Post type singular"
+msgid "Business units"
+msgstr ""
+
+#: ../example/example-plugin.php:105
+msgctxt "Post type description"
+msgid "Business unit for categorizing the employees"
+msgstr ""
 
 #. translators: plugin header field 'Name'
-#: pe-post-type-creator.php:0
-#@ post-type-creator
 msgid "Post types creator"
-msgstr ""
+msgstr "Post types creator"
 
 #. translators: plugin header field 'Author'
-#: pe-post-type-creator.php:0
-#@ post-type-creator
 msgid "Peter Elmered"
-msgstr ""
+msgstr "Peter Elmered"
 
-#. translators: plugin header field 'Version'
-#: pe-post-type-creator.php:0
-#@ post-type-creator
-msgid "0.1.0"
-msgstr ""
-
-#: pe-post-type-creator.php:96
-#: pe-post-type-creator.php:100
-#: pe-post-type-creator.php:150
-#: pe-post-type-creator.php:154
-#@ post-type-creator
-msgid "plural_label_ucf"
-msgstr ""
-
-#: pe-post-type-creator.php:98
-#@ post-type-creator
-msgctxt "Post Type General Name"
-msgid "plural_label_ucf"
-msgstr ""
-
-#: pe-post-type-creator.php:99
-#@ post-type-creator
-msgctxt "Post Type Singular Name"
-msgid "singular_label_ucf"
-msgstr ""
-
-#: pe-post-type-creator.php:101
-#: pe-post-type-creator.php:155
-#: pe-post-type-creator.php:156
+#: ../pe-post-type-creator.php:52 ../pe-post-type-creator.php:411 ../pe-post-type-
+#: creator.php:412
 #, php-format
-#@ post-type-creator
 msgid "Parent %s"
 msgstr "Förälder %s"
 
-#: pe-post-type-creator.php:103
+#: ../pe-post-type-creator.php:54
 #, php-format
-#@ post-type-creator
 msgid "All %s"
 msgstr "Alla %s"
 
-#: pe-post-type-creator.php:104
-#: pe-post-type-creator.php:105
+#: ../pe-post-type-creator.php:55 ../pe-post-type-creator.php:56
 #, php-format
-#@ post-type-creator
 msgid "View %s"
 msgstr "Visa %s"
 
-#: pe-post-type-creator.php:106
+#: ../pe-post-type-creator.php:57
 #, php-format
-#@ post-type-creator
 msgid "Add %s"
 msgstr "Lägg till %s"
 
-#: pe-post-type-creator.php:107
+#: ../pe-post-type-creator.php:58 ../pe-post-type-creator.php:414 ../pe-post-type-
+#: creator.php:415
 #, php-format
-#@ post-type-creator
 msgid "Add new %s"
 msgstr "Lägg till ny %s"
 
-#: pe-post-type-creator.php:108
-#: pe-post-type-creator.php:160
-#@ post-type-creator
+#: ../pe-post-type-creator.php:59 ../pe-post-type-creator.php:416
 msgid "Edit"
 msgstr "Ändra"
 
-#: pe-post-type-creator.php:109
-#: pe-post-type-creator.php:161
+#: ../pe-post-type-creator.php:60 ../pe-post-type-creator.php:417
 #, php-format
-#@ post-type-creator
 msgid "Edit %s"
 msgstr "Ändra %s"
 
-#: pe-post-type-creator.php:110
-#: pe-post-type-creator.php:162
+#: ../pe-post-type-creator.php:61 ../pe-post-type-creator.php:418
 #, php-format
-#@ post-type-creator
 msgid "Update %s"
 msgstr "Uppdatera %s"
 
-#: pe-post-type-creator.php:111
-#: pe-post-type-creator.php:164
+#: ../pe-post-type-creator.php:62 ../pe-post-type-creator.php:420
 #, php-format
-#@ post-type-creator
 msgid "Search %s"
 msgstr "Søk efter %s"
 
-#: pe-post-type-creator.php:112
-#: pe-post-type-creator.php:167
+#: ../pe-post-type-creator.php:63 ../pe-post-type-creator.php:423
 #, php-format
-#@ post-type-creator
 msgid "No %s found"
 msgstr "Inga  %s hittades"
 
-#: pe-post-type-creator.php:113
+#: ../pe-post-type-creator.php:64
 #, php-format
-#@ post-type-creator
 msgid "No %s found in trash"
 msgstr "Inga %s hittades i papperskorgen"
 
-#: pe-post-type-creator.php:152
-#@ post-type-creator
-msgctxt "Taxonomy General Name"
-msgid "plural_label_ucf"
-msgstr ""
-
-#: pe-post-type-creator.php:153
-#@ post-type-creator
-msgctxt "Taxonomy Singular Name"
-msgid "singular_label_ucf"
-msgstr ""
-
-#: pe-post-type-creator.php:157
-#: pe-post-type-creator.php:159
+#: ../pe-post-type-creator.php:413
 #, php-format
-#@ post-type-creator
 msgid "Parent %s:"
 msgstr "Förälder %s:"
 
-#: pe-post-type-creator.php:158
+#: ../pe-post-type-creator.php:421
 #, php-format
-#@ post-type-creator
-msgid "New %s:"
-msgstr "Ny %s:"
-
-#: pe-post-type-creator.php:165
-#, php-format
-#@ plural_label
 msgid "Add or remove %s"
-msgstr ""
+msgstr "Lägg till eller ta bort %s"
 
-#: pe-post-type-creator.php:166
-#@ woocommerce-as400
-msgid "Choose from the most used items"
-msgstr ""
+#. Name of the plugin
+msgid "My Custom Posts"
+msgstr "Mina posttyper"
 
+#. Description of the plugin
+msgid "Add custom post types and taxonomies"
+msgstr "Lägg till posttyper och taxonomier"

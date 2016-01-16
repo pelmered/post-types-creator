@@ -3,140 +3,194 @@ msgstr ""
 "Project-Id-Version: Baker Hansen Image boxes v0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-02-20 17:35:17+0000\n"
-"Last-Translator: admin <web@optimalnorge.no>\n"
+"PO-Revision-Date: Sat Jan 16 2016 21:25:36 GMT+0100 (CET)\n"
+"Last-Translator: angrycreative <dev@angrycreative.se>\n"
 "Language-Team: \n"
+"Language: Norwegian (Bokmål)\n"
+"Plural-Forms: nplurals=2; plural=n != 1\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: CSL v1.x\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Loco - https://localise.biz/\n"
 "X-Poedit-Language: Norwegian (Bokmål)\n"
 "X-Poedit-Country: NORWAY\n"
-"X-Poedit-SourceCharset: utf-8\n"
-"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;"
+"__:1;_e:1;_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;"
+"_x:1,2c;_ex:1,2c;_nx:1,2,4c;_nx_noop:1,2,3c;_n_js:1,2;_nx_js:1,2,3c;"
+"esc_attr__:1;esc_html__:1;esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;"
+"esc_html_x:1,2c;comments_number_link:2,3;t:1;st:1;trans:1;transChoice:1,2\n"
 "X-Poedit-Basepath: ../\n"
 "X-Poedit-Bookmarks: \n"
 "X-Poedit-SearchPath-0: .\n"
-"X-Textdomain-Support: yes"
+"X-Textdomain-Support: yes\n"
+"X-Loco-Target-Locale: nb_NO"
 
-#. translators: plugin header field 'Name'
-#: post-type-creator.php:0
-#@ post-type-creator
-msgid "Baker Hansen Image boxes"
-msgstr ""
-
-#. translators: plugin header field 'Version'
-#: post-type-creator.php:0
-#@ post-type-creator
-msgid "0.1.0"
-msgstr ""
-
-#: post-type-creator.php:42
-#@ post-type-creator
-msgctxt "Post type description"
+#. Description of the plugin
 msgid ""
+"Helper plugin for easily creating localize-ready custom post types and "
+"custom taxonomies with extra functionality in WordPress"
+msgstr ""
+"En plugin som hjelper deg till å raskt og enkelt lage oversettbare posttyper "
+"og taksonomier med ekstra funksjoner i WordPress"
+
+#: ../example/example-plugin.php:30
+msgctxt "Post type plural"
+msgid "butikk"
 msgstr ""
 
-#: post-type-creator.php:95
-#: post-type-creator.php:99
-#@ post-type-creator
-msgid "plural_label_ucf"
+#: ../example/example-plugin.php:31
+msgctxt "Post type singular"
+msgid "butikker"
 msgstr ""
 
-#: post-type-creator.php:97
-#@ post-type-creator
-msgctxt "Post Type General Name"
-msgid "plural_label_ucf"
+#: ../example/example-plugin.php:47
+msgctxt "Post status singular"
+msgid "Pending"
 msgstr ""
 
-#: post-type-creator.php:98
-#@ post-type-creator
-msgctxt "Post Type Singular Name"
-msgid "singular_label_ucf"
+#: ../example/example-plugin.php:48
+msgctxt "Post status plural"
+msgid "Pending"
 msgstr ""
 
-#: post-type-creator.php:100
+#: ../example/example-plugin.php:52
+msgctxt "Post status singular"
+msgid "Active"
+msgstr ""
+
+#: ../example/example-plugin.php:53
+msgctxt "Post status plural"
+msgid "Active"
+msgstr ""
+
+#: ../example/example-plugin.php:57
+msgctxt "Post status singular"
+msgid "Completed"
+msgstr ""
+
+#: ../example/example-plugin.php:58
+msgctxt "Post status plural"
+msgid "Completed"
+msgstr ""
+
+#: ../example/example-plugin.php:79
+msgctxt "Post type plural"
+msgid "employee"
+msgstr ""
+
+#: ../example/example-plugin.php:80
+msgctxt "Post type singular"
+msgid "employees"
+msgstr ""
+
+#: ../example/example-plugin.php:91
+msgctxt "Post type plural"
+msgid "area"
+msgstr ""
+
+#: ../example/example-plugin.php:92
+msgctxt "Post type singular"
+msgid "areas"
+msgstr ""
+
+#: ../example/example-plugin.php:103
+msgctxt "Post type plural"
+msgid "Business unit"
+msgstr ""
+
+#: ../example/example-plugin.php:104
+msgctxt "Post type singular"
+msgid "Business units"
+msgstr ""
+
+#: ../example/example-plugin.php:105
+msgctxt "Post type description"
+msgid "Business unit for categorizing the employees"
+msgstr ""
+
+#. Name of the plugin
+msgid "Post types creator"
+msgstr "Post types creator"
+
+#. translators: plugin header field 'Author'
+msgid "Peter Elmered"
+msgstr "Peter Elmered"
+
+#: ../pe-post-type-creator.php:63 ../pe-post-type-creator.php:423
 #, php-format
-#@ post-type-creator
+msgid "No %s found"
+msgstr "Ingen %s funnet"
+
+#: ../pe-post-type-creator.php:64
+#, php-format
+msgid "No %s found in trash"
+msgstr "Ingen %s ble funnet i søpla"
+
+#: ../pe-post-type-creator.php:413
+#, php-format
+msgid "Parent %s:"
+msgstr "Forelder%s"
+
+#: ../pe-post-type-creator.php:421
+#, php-format
+msgid "Add or remove %s"
+msgstr "Legg til eller fjern %s"
+
+#: ../pe-post-type-creator.php:422
+msgid "Choose from the most used items"
+msgstr "Velg blant de mest brukte"
+
+#. Name of the plugin
+msgid "My Custom Posts"
+msgstr "Mine posttyper"
+
+#. Description of the plugin
+msgid "Add custom post types and taxonomies"
+msgstr "Legg till posttyper og taksonomier"
+
+#: ../pe-post-type-creator.php:52 ../pe-post-type-creator.php:411 ../pe-post-type-
+#: creator.php:412
+#, php-format
 msgid "Parent %s"
 msgstr "Forelder%s"
 
-#: post-type-creator.php:102
+#: ../pe-post-type-creator.php:54
 #, php-format
-#@ post-type-creator
 msgid "All %s"
 msgstr "Alle %s"
 
-#: post-type-creator.php:103
-#: post-type-creator.php:104
+#: ../pe-post-type-creator.php:55 ../pe-post-type-creator.php:56
 #, php-format
-#@ post-type-creator
 msgid "View %s"
 msgstr "Vise %s"
 
-#: post-type-creator.php:105
+#: ../pe-post-type-creator.php:57
 #, php-format
-#@ post-type-creator
 msgid "Add %s"
 msgstr "Legg til %s"
 
-#: post-type-creator.php:106
+#: ../pe-post-type-creator.php:58 ../pe-post-type-creator.php:414 ../pe-post-type-
+#: creator.php:415
 #, php-format
-#@ post-type-creator
 msgid "Add new %s"
 msgstr "Legg til ny %s"
 
-#: post-type-creator.php:107
-#@ post-type-creator
+#: ../pe-post-type-creator.php:59 ../pe-post-type-creator.php:416
 msgid "Edit"
 msgstr "Endre %s"
 
-#: post-type-creator.php:108
+#: ../pe-post-type-creator.php:60 ../pe-post-type-creator.php:417
 #, php-format
-#@ post-type-creator
 msgid "Edit %s"
 msgstr "Endre %s"
 
-#: post-type-creator.php:109
+#: ../pe-post-type-creator.php:61 ../pe-post-type-creator.php:418
 #, php-format
-#@ post-type-creator
 msgid "Update %s"
 msgstr "Oppdatere %s"
 
-#: post-type-creator.php:110
+#: ../pe-post-type-creator.php:62 ../pe-post-type-creator.php:420
 #, php-format
-#@ post-type-creator
 msgid "Search %s"
 msgstr "Søk %s"
-
-#. translators: plugin header field 'Author'
-#: post-type-creator.php:0
-#@ post-type-creator
-msgid "Peter Elmered"
-msgstr ""
-
-#: post-type-creator.php:40
-#@ post-type-creator
-msgctxt "Post type plural"
-msgid "bildeboks"
-msgstr ""
-
-#: post-type-creator.php:41
-#@ post-type-creator
-msgctxt "Post type singular"
-msgid "bildebokser"
-msgstr ""
-
-#: post-type-creator.php:111
-#, php-format
-#@ post-type-creator
-msgid "No %s found"
-msgstr ""
-
-#: post-type-creator.php:112
-#, php-format
-#@ post-type-creator
-msgid "No %s found in trash"
-msgstr ""
-
