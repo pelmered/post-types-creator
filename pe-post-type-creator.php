@@ -34,6 +34,7 @@ class PE_Post_Type_Creator {
             $this->use_acf = true;
         }
 
+        $this->load_plugin_textdomain();
     }
 
     function parse_post_type_args( $post_slug, $post_type )
@@ -100,7 +101,6 @@ class PE_Post_Type_Creator {
     {
         add_action( 'wp_ajax_pe_ptc_sort_posts', array($this, 'sortable_ajax_handler') );
 
-        $this->load_plugin_textdomain();
         $this->register_post_types();
         $this->register_taxonomies();
 
