@@ -46,7 +46,8 @@ Note: Edit the installer paths to reflect your installation
 ###Normal manual install
 First, install the plugin as usnual by uploading the plugin to you plugins folder, typically ` wp-content/plugins/  `.
 
-Secondly, copy the example plugin file from ` example/example-plugin.php ` in this plugin to your plugins folder, typically ` wp-content/plugins/  ` and change the name and edit the data acording to your needs.
+###Use the example plugin as a boilderplate for your custom post type plugin
+Secondly, copy the example plugin from ` example-plugin/my-custom-post-types/ ` in this plugin to your plugins folder, typically ` wp-content/plugins/ ` or install the example plugin from the zip file in  ` example-plugin/my-custom-post-types.zip `. Change the name, description etc of the plugin and edit the data acording to your needs.
 
 ###Usage
 
