@@ -434,6 +434,12 @@ class PE_Post_Type_Creator {
 
                     //Custom
                     'sortable'              => false,
+
+                    // register_taxonomy overrides
+                    // https://codex.wordpress.org/Function_Reference/register_taxonomy
+                    'rewrite' => array(
+                        'slug' => sanitize_title($taxonomy['plural_label']),
+                    )
                 );
 
                 $final_args = wp_parse_args(array_merge($taxonomy, $args), $default_args);
