@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Post types creator
- * Description: Helper plugin for easily creating localize-ready custom post types and custom taxonomies in WordPress
+ * Description: Helper plugin for easily creating localize-ready custom post types and custom taxonomies with extra functionality in WordPress
  * Version:     0.2.0
  * Author:      Peter Elmered
  * Text Domain: post-type-creator
@@ -419,7 +419,7 @@ class PE_Post_Type_Creator {
                         //'separate_items_with_commas' => __( 'Separate items with commas', $this->text_domain ),
                         'search_items'          => sprintf( __('Search %s', $this->text_domain), $taxonomy['plural_label']),
                         'add_or_remove_items'   => __( 'Add or remove %s', $taxonomy['plural_label'] ),
-                        'choose_from_most_used' => __( 'Choose from the most used items', 'woocommerce-as400' ),
+                        'choose_from_most_used' => __( 'Choose from the most used items', $this->text_domain ),
                         'not_found'             => sprintf(__( 'No %s found', $this->text_domain ), $taxonomy['plural_label']),
                     ),
                 );
@@ -494,20 +494,16 @@ class PE_Post_Type_Creator {
      *
      * Note: the first-loaded translation file overrides any following ones if the same translation is present.
      *
-     * Admin Locales are found in:
-     * 		- WP_LANG_DIR/post-tpye-creator/post-tpye-creator-admin-LOCALE.mo
-     * 		- WP_LANG_DIR/plugins/post-tpye-creator-admin-LOCALE.mo
+     * Translations / Locales are loaded from:
+     * 	 - WP_LANG_DIR/post-type-creator/post-type-creator-LOCALE.mo (first prority)
+     * 	 - [path to this plugin]/languages/post-type-creator-LOCALE.mo (Loaded if the file above does not exist)
      *
-     * Frontend/global Locales found in:
-     * 		- WP_LANG_DIR/post-tpye-creator/post-tpye-creator-LOCALE.mo
-     * 	 	- woocommerce/i18n/languages/post-tpye-creator-LOCALE.mo (which if not found falls back to:)
-     * 	 	- WP_LANG_DIR/plugins/post-tpye-creator-LOCALE.mo
      */
     public function load_plugin_textdomain()
     {
         $locale = apply_filters( 'plugin_locale', get_locale(), $this->text_domain );
 
-        load_textdomain( $this->text_domain, WP_LANG_DIR . '/' . $this->text_domain . '/-' . $this->text_domain . '-' . $locale . '.mo' );
+        load_textdomain( $this->text_domain, WP_LANG_DIR . '/' . $this->text_domain . '/' . $this->text_domain . '-' . $locale . '.mo' );
         load_plugin_textdomain( $this->text_domain, false, plugin_basename( dirname( __FILE__ ) ) . "/languages" );
     }
 
