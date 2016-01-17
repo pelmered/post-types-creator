@@ -22,6 +22,10 @@ class PE_Post_Type_Creator {
     public $use_acf = false;
 
 
+    /**
+     * PE_Post_Type_Creator constructor. Should be called on plugins_loaded action
+     * @param array $options
+     */
     function __construct( $options = array() )
     {
         if( isset( $options['text_domain'] ) )
@@ -36,6 +40,9 @@ class PE_Post_Type_Creator {
         $this->load_plugin_textdomain();
     }
 
+    /**
+     * Initialize the plugin. Should be called at init action
+     */
     function init()
     {
         add_action( 'wp_ajax_pe_ptc_sort_posts', array($this, 'sortable_ajax_handler') );
@@ -45,14 +52,23 @@ class PE_Post_Type_Creator {
 
         add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );
 
-        add_filter('get_terms_orderby', array( $this, 'sort_get_terms' ), 10, 3 );
-
         if( is_admin() && isset( $_GET['pe-ptc-reinit'] ) )
         {
             $this->force_reinitialize();
         }
+        else
+        {
+            // Sort posts
+            add_filter('pre_get_posts', array( $this, 'sort_admin_post_list' ) );
+
+            // Sort terms
+            add_filter('get_terms_orderby', array( $this, 'sort_get_terms' ), 10, 3 );
+        }
     }
 
+    /**
+     * Reinitialize the plugins. Flush rewrite rules and set sort meta value for sortable post types to make the sorting query work.
+     */
     public function force_reinitialize()
     {
         global $wp_rewrite;
@@ -64,7 +80,7 @@ class PE_Post_Type_Creator {
 
             if( isset($post_args['sortable']) && $post_args['sortable'] )
             {
-                $sort_meta_key = apply_filters( 'pe_ptc_sort_meta_key', 'sort', $post_slug );
+                $sort_meta_key = $this->get_sort_meta_key( $post_slug );
 
                 $args = array(
                     'posts_per_page'   => -1,
@@ -84,12 +100,50 @@ class PE_Post_Type_Creator {
                         delete_post_meta( $post->ID, $sort_meta_key );
                         update_post_meta( $post->ID, $sort_meta_key, $sort_value++ );
                     }
-
                 }
             }
         }
     }
 
+    /**
+     * Public interface for seting post type data
+     *
+     * @param $post_types
+     */
+    function set_post_types($post_types)
+    {
+        $parsed_post_types = array();
+
+        foreach( $post_types AS $slug => $post_type ) {
+            $parsed_post_types[$slug] = $this->parse_post_type_args($slug, $post_type);
+        }
+
+        $this->post_types = $parsed_post_types;
+    }
+
+    /**
+     * Public interface for seting taxonomy data
+     *
+     * @param $taxonomies
+     */
+    function set_taxonomies($taxonomies)
+    {
+        $parsed_taxonomies = array();
+
+        foreach( $taxonomies AS $slug => $post_type ) {
+            $parsed_taxonomies[$slug] = $this->parse_taxonomy_args($slug, $post_type);
+        }
+
+        $this->taxonomies = $parsed_taxonomies;
+    }
+
+    /**
+     * Generates all post type labels and merges the labels and default values with the values passed to the plugin
+     *
+     * @param $post_slug - Post type slug
+     * @param $post_type - Post type arguments/settings
+     * @return array - Generated arguments for passing to register_post_type()
+     */
     function parse_post_type_args( $post_slug, $post_type )
     {
         $post_type['singular_label_ucf'] = ucfirst($post_type['singular_label']);
@@ -103,7 +157,7 @@ class PE_Post_Type_Creator {
                 'singular_name'         => _x( $post_type['singular_label_ucf'], 'Post Type Singular Name', $this->text_domain ),
                 'menu_name'             => __( $post_type['plural_label_ucf'], $this->text_domain ),
                 'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $post_type['singular_label']),
-                //'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $post_type['singular_label']),
+                'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $post_type['singular_label']),
                 'all_items'             => sprintf(__( 'All %s', $this->text_domain ), $post_type['plural_label']),
                 'view'                  => sprintf(__( 'View %s', $this->text_domain ), $post_type['singular_label']),
                 'view_item'             => sprintf(__( 'View %s', $this->text_domain ), $post_type['singular_label']),
@@ -134,6 +188,13 @@ class PE_Post_Type_Creator {
         return wp_parse_args(array_merge( $generated_args, $post_type ), $default_args);
     }
 
+    /**
+     * Generates all taxonomy labels and merges the labels and default values with the values passed to the plugin
+     *
+     * @param $taxonomy_slug - Taxonomy slug
+     * @param $taxonomy - Taxonomy arguments/settings
+     * @return array - Generated arguments for passing to register_taxonomy()
+     */
     function parse_taxonomy_args( $taxonomy_slug, $taxonomy )
     {
         $taxonomy['singular_label_ucf'] = ucfirst($taxonomy['singular_label']);
@@ -154,7 +215,7 @@ class PE_Post_Type_Creator {
                 'edit'                  => __( 'Edit', $this->text_domain ),
                 'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $taxonomy['singular_label']),
                 'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $taxonomy['singular_label']),
-                //'separate_items_with_commas' => __( 'Separate items with commas', $this->text_domain ),
+                'separate_items_with_commas' => __( 'Separate items with commas', $this->text_domain ),
                 'search_items'          => sprintf( __('Search %s', $this->text_domain), $taxonomy['plural_label']),
                 'add_or_remove_items'   => __( 'Add or remove %s', $taxonomy['plural_label'] ),
                 'choose_from_most_used' => __( 'Choose from the most used items', $this->text_domain ),
@@ -183,30 +244,9 @@ class PE_Post_Type_Creator {
         return wp_parse_args(array_merge( $generated_args, $taxonomy ), $default_args);
     }
 
-    function set_post_types($post_types)
-    {
-        $parsed_post_types = array();
-
-        foreach( $post_types AS $slug => $post_type ) {
-            $parsed_post_types[$slug] = $this->parse_post_type_args($slug, $post_type);
-        }
-
-        $this->post_types = $parsed_post_types;
-    }
-
-
-    function set_taxonomies($taxonomies)
-    {
-        $parsed_taxonomies = array();
-
-        foreach( $taxonomies AS $slug => $post_type ) {
-            $parsed_taxonomies[$slug] = $this->parse_taxonomy_args($slug, $post_type);
-        }
-
-        $this->taxonomies = $parsed_taxonomies;
-    }
-
-
+    /**
+     * Register the post types passed to the plugin and adds extra features depending on passed options
+     */
     function register_post_types()
     {
         $post_types = $this->post_types;
@@ -254,11 +294,6 @@ class PE_Post_Type_Creator {
                     $this->post_types[$current_post_type]['sortable'] == true
                 )
                 {
-                    /**
-                     * Make post list in admin sorted without meta value
-                     */
-                    add_filter('pre_get_posts', array( $this, 'sort_admin_post_list' ) );
-
                     wp_enqueue_script('jquery-ui-core');
                     wp_enqueue_script('jquery-ui-sortable');
 
@@ -276,6 +311,9 @@ class PE_Post_Type_Creator {
 
     }
 
+    /**
+     * Register the taxonomies passed to the plugin and adds extra features depending on passed options
+     */
     function register_taxonomies()
     {
         $taxonomies = $this->taxonomies;
@@ -294,11 +332,6 @@ class PE_Post_Type_Creator {
                     $this->taxonomies[$current_taxonomy]['sortable'] == true
                 )
                 {
-                    /**
-                     * Make post list in admin sorted with out meta value
-                     */
-                    //add_filter('pre_get_posts', array( $this, 'sort_admin_tax_list' ) );
-
                     /**
                      * Show all terms on the same page. Needed for sortable to work.
                      */
@@ -324,7 +357,18 @@ class PE_Post_Type_Creator {
     }
 
     /**
-     * Sets ORDER BY in teh get_terms() query wich should used in both admin and in themes to get terms
+     * Returns meta sort key for post type
+     *
+     * @param $post_type - Slug of post type
+     * @return String - Meta key for sorting post type
+     */
+    function get_sort_meta_key( $post_type )
+    {
+        return apply_filters( 'pe_ptc_sort_meta_key', 'sort', $post_type );
+    }
+
+    /**
+     * Sets ORDER BY in the get_terms() query which is used in both admin and in themes to get terms
      *
      * @param string $orderby
      * @param type $args
@@ -349,37 +393,64 @@ class PE_Post_Type_Creator {
         return $orderby;
     }
 
+    /**
+     * Set default sort meta for new posts. Hooked into save_post
+     * Reference: https://codex.wordpress.org/Plugin_API/Action_Reference/save_post
+     *
+     * @param $post_id
+     * @param $post
+     * @param $update
+     */
     function save_post( $post_id, $post, $update )
     {
-        if(in_array($post->post_type , $this->post_types) && $this->post_types[$post->post_type]['sortable'] )
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+
+        if( in_array( $post->post_type , $this->post_types ) && $this->post_types[$post->post_type]['sortable'] )
         {
-            $sort_value = apply_filters('pe_ptc_sort_default', 99, $post_id, $post, $update );
+            $current = get_post_meta( $post->ID, $this->get_sort_meta_key( $post->post_type ), true );
 
-            $sort_meta_key = apply_filters( 'pe_ptc_sort_meta_key', 'sort', $post->post_type );
+            if( empty( $current ) || !is_numeric( $current ) )
+            {
+                $sort_value = apply_filters('pe_ptc_sort_default', 0, $post_id, $post, $update );
 
-            if( $this->use_acf )
-            {
-                update_field( $sort_meta_key, $sort_value, $post_id );
-            }
-            else
-            {
-                update_post_meta( $post_id, $sort_meta_key, $sort_value );
+                $sort_meta_key = $this->get_sort_meta_key( $post->post_type );
+
+                if( $this->use_acf )
+                {
+                    update_field( $sort_meta_key, $sort_value, $post_id );
+                }
+                else
+                {
+                    update_post_meta( $post_id, $sort_meta_key, $sort_value );
+                }
             }
         }
     }
 
+    /**
+     * Adds order by query to all post queries
+     *
+     * @param $wp_query
+     * @return mixed
+     */
     function sort_admin_post_list( $wp_query )
     {
-        $sort_meta_key = apply_filters( 'pe_ptc_sort_meta_key', 'sort', $wp_query->query_vars['post_type'] );
-
-        $wp_query->set( 'orderby', 'meta_value_num' );
-        $wp_query->set( 'meta_key', $sort_meta_key );
-        $wp_query->set( 'order', 'ASC' );
+        if( $this->post_types[$wp_query->query_vars['post_type']]['sortable'] )
+        {
+            $wp_query->set( 'orderby', 'meta_value_num' );
+            $wp_query->set( 'meta_key', $this->get_sort_meta_key( $wp_query->query_vars['post_type'] ) );
+            $wp_query->set( 'order', 'ASC' );
+        }
 
         return $wp_query;
     }
 
-    // https://gist.github.com/mjangda/476964
+    /**
+     * Gets slug of current post type in admin views
+     * Reference: https://gist.github.com/mjangda/476964
+     *
+     * @return string - Slug of current post type or null
+     */
     function get_current_post_type()
     {
         global $post, $typenow, $current_screen;
@@ -406,6 +477,13 @@ class PE_Post_Type_Creator {
         }
     }
 
+    /**
+     *
+     * Gets slug of current taxonomy in admin views
+     *
+     * @param string $post_type - (optional) Get only for specific post type (post slug)
+     * @return string - Slug of current taxonomy or null
+     */
     function get_current_taxonomy( $post_type = '' )
     {
         if( isset( $_REQUEST['taxonomy'] ) && ( empty($post_type) || $_REQUEST['post_type'] == $post_type ) )
@@ -418,6 +496,10 @@ class PE_Post_Type_Creator {
         }
     }
 
+    /**
+     * Hack for adding custom post statuses to the select box. There is currently not a better is not in WP core.
+     * Related trac ticket: https://core.trac.wordpress.org/ticket/12706
+     */
     function append_post_status_list()
     {
         global $post;
@@ -450,9 +532,13 @@ class PE_Post_Type_Creator {
             echo '});';
             echo '</script>';
 
+
         }
     }
 
+    /**
+     * AJAX handler/callback for drag-and-drop sorting
+     */
     function sortable_ajax_handler()
     {
         parse_str(filter_input(INPUT_POST, 'post_data', FILTER_SANITIZE_STRING), $post_data );
@@ -471,7 +557,7 @@ class PE_Post_Type_Creator {
 
         if( isset($post_data['post']) && is_array($post_data['post']))
         {
-            $sort_meta_key = apply_filters( 'pe_ptc_sort_meta_key', 'sort', $post_type );
+            $sort_meta_key = $this->get_sort_meta_key( $post_type );
 
             foreach( $post_data['post'] AS $post_id )
             {
