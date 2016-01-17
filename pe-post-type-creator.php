@@ -46,14 +46,14 @@ class PE_Post_Type_Creator {
         add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );
 
         add_filter('get_terms_orderby', array( $this, 'sort_get_terms' ), 10, 3 );
+
+        if( is_admin() && isset( $_GET['pe-ptc-reinit'] ) )
+        {
+            $this->force_reinitialize();
+        }
     }
 
     public function force_reinitialize()
-    {
-        add_action( 'init', array( $this, 'force_reinitialize2' ) );
-    }
-
-    public function force_reinitialize2()
     {
         global $wp_rewrite;
 
@@ -65,8 +65,6 @@ class PE_Post_Type_Creator {
             if( isset($post_args['sortable']) && $post_args['sortable'] )
             {
                 $sort_meta_key = apply_filters( 'pe_ptc_sort_meta_key', 'sort', $post_slug );
-
-                //delete_post_meta_by_key( $sort_meta_key );
 
                 $args = array(
                     'posts_per_page'   => -1,
@@ -81,12 +79,8 @@ class PE_Post_Type_Creator {
                 {
                     $current = get_post_meta( $post->ID, $sort_meta_key, true );
 
-                    var_dump($current);
-
-                    if( empty( $current ) )
+                    if( empty( $current ) || !is_numeric( $current ) )
                     {
-                        var_dump('$sort_value');
-                        var_dump($sort_value);
                         delete_post_meta( $post->ID, $sort_meta_key );
                         update_post_meta( $post->ID, $sort_meta_key, $sort_value++ );
                     }
