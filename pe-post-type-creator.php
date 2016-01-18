@@ -435,7 +435,16 @@ class PE_Post_Type_Creator {
      */
     function sort_admin_post_list( $wp_query )
     {
-        if( $this->post_types[$wp_query->query_vars['post_type']]['sortable'] )
+        if( !isset( $wp_query->query_vars ) || !isset( $wp_query->query_vars['post_type'] ) || is_array( $wp_query->query_vars['post_type'] ) )
+        {
+            return $wp_query;
+        }
+
+        if(
+            isset($wp_query->query_vars['post_type']) &&
+            isset($this->post_types[$wp_query->query_vars['post_type']]) &&
+            $this->post_types[$wp_query->query_vars['post_type']]['sortable']
+        )
         {
             $wp_query->set( 'orderby', 'meta_value_num' );
             $wp_query->set( 'meta_key', $this->get_sort_meta_key( $wp_query->query_vars['post_type'] ) );
