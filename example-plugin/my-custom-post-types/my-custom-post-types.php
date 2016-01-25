@@ -34,8 +34,10 @@ function My_Post_Type_Creator()
                 // http://codex.wordpress.org/Function_Reference/register_post_type
                 'supports'            => array( 'title', 'editor', 'thumbnail',),
                 'taxonomies'          => array( 'area' ),
-
-
+                
+                // Icon for the menu in WP-Admin
+                // See all available icons here: https://developer.wordpress.org/resource/dashicons/
+                // If you do now find anything suitable, you can link to your own icon (png)
                 'menu_icon'           => 'dashicons-store',
 
                 // Make post type drag and drop sortable in admin list view
