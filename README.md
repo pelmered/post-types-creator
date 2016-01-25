@@ -3,6 +3,24 @@ Helper plugin that provides an easy interface for creating fully translated cust
 
 Current version need Advanced Custom Fields to be installed for sorting to work.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Contents**
+
+- [Features](#features)
+- [Installation](#installation)
+  - [Composer](#composer)
+  - [Normal manual install](#normal-manual-install)
+  - [Use the example plugin as a boilderplate for your custom post type plugin](#use-the-example-plugin-as-a-boilderplate-for-your-custom-post-type-plugin)
+- [Usage](#usage)
+  - [Adding custom post types](#adding-custom-post-types)
+    - [Minimal:](#minimal)
+    - [Example / typical:](#example--typical)
+  - [Adding taxonomies:](#adding-taxonomies)
+  - [More examples / Example plugin](#more-examples--example-plugin)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ##Features
 - Easy interface, just a few lines of code requiered.
 - Flexible. Does not restrict anything, you can pass any arguments to ` register_post_type() ` and ` register_taxonomy() ` by simply specifying them in the normal way and they will override the defaults. 
@@ -11,13 +29,16 @@ Current version need Advanced Custom Fields to be installed for sorting to work.
   - Swedish
   - Norwegian
   - Plase help me to add more! 
+- Translated permalinks/slugs for post types and taxonomies are generated automatically, but it is possible to override this deafault. 
 - Custom columns in admin with only a few lines of code
 - easily add custom post statuses
 - Drag & drop sortable (drag and drop in the normal list view in WP Admin for both posts and taxonomies/terms)
 - Integration with Advanced Custom Fields(optional)
 
+##Planned features
+- Unit tests
 
-##Install and Usage
+##Installation
 
 ###Composer
 Add the repository and add ` pelmered/post-types-creator ` to the require section in your composer.json. Example of typical full composer.json file:
@@ -49,11 +70,11 @@ First, install the plugin as usnual by uploading the plugin to you plugins folde
 ###Use the example plugin as a boilderplate for your custom post type plugin
 Secondly, copy the example plugin from ` example-plugin/my-custom-post-types/ ` in this plugin to your plugins folder, typically ` wp-content/plugins/ ` or install the example plugin from the zip file in  ` example-plugin/my-custom-post-types.zip `. Change the name, description etc of the plugin and edit the data acording to your needs.
 
-###Usage
+##Usage
 
-####Adding custom post types
+###Adding custom post types
 
-#####Minimal:
+####Minimal:
 Registers a post type with the slug ` stores ` and the labels tranlatable based on ` Post type plural ` (plural) and ` Post type singular ` (singular).
 
 ```php
@@ -75,7 +96,7 @@ $ptc->set_post_types(array(
 add_action( 'init', array($ptc, 'init'), 0 );
 ```
 
-#####Example / typical:
+####Example / typical:
 Same as minimal, but allso adds a description, makes it drag and drop sortable in the admin list, adds a custom admin column and overides some ` register_post_type() ` defaults, for example connecting the taxonomy ` area `(see example below).
 
 ```php
@@ -116,7 +137,7 @@ function example_get_featured_image_column( $post_id )
 }
 ```
 
-####Adding taxonomies:
+###Adding taxonomies:
 Typical taxonomy that is drag and drop sortable in the normal admin list view and connected to the ` stores ` post type in the example above.
 
 ```php
@@ -142,4 +163,5 @@ $ptc->set_taxonomies(array(
 add_action( 'init', array($ptc, 'init'), 0 );
 ```
 
-##### For more examples, or help to get started see the example plugin in ` example/example-plugin.php `. Copy the example plugin to your plugins directory for the fastest way to get started.
+### More examples / Example plugin
+For more examples, or help to get started see the example plugin in ` example-plugin/my-custom-post-types.php `. Copy the example plugin to your plugins directory for the fastest way to get started.
