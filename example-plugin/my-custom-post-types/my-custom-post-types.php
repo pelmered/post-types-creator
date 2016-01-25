@@ -34,7 +34,10 @@ function My_Post_Type_Creator()
                 // http://codex.wordpress.org/Function_Reference/register_post_type
                 'supports'            => array( 'title', 'editor', 'thumbnail',),
                 'taxonomies'          => array( 'area' ),
-                
+
+
+                'menu_icon'           => 'dashicons-store',
+
                 // Make post type drag and drop sortable in admin list view
                 'sortable'      => false,
 
@@ -78,10 +81,11 @@ function My_Post_Type_Creator()
                 'singular_label' => _x('employee', 'Post type singular', $text_domain),
                 'plural_label'  => _x('employees', 'Post type plural', $text_domain),
                 'description'   => _x('', 'Post type description', $text_domain),
-                
+
                 // Override any defaults from register_post_type()
+                'menu_icon'           => 'dashicons-businessman',
                 'supports'            => array( 'title', 'thumbnail' ),
-                'taxonomies'          => array( 'image_box_type' ),
+                'taxonomies'          => array( 'business_unit' ),
             )
         ));
         
