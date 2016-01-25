@@ -1,11 +1,22 @@
 {
-  "name"       : "pelmered/post-types-creator",
-  "description": "Helper plugin for easily creating localize-ready custom post types and custom taxonomies in WordPress",
-  "homepage"   : "https://github.com/pelmered/Post-types-creator",
-  "type"       : "wordpress-plugin",
-  "license"    : "GPL-2.0+",
-  "require"    : {
-    "composer/installers": "~1.0"
-  }
+    "name"       : "pelmered/post-types-creator",
+    "description": "Helper plugin for easily creating localize-ready custom post types and custom taxonomies in WordPress",
+    "homepage"   : "https://github.com/pelmered/Post-types-creator",
+    "keywords"    : ["wordpress", "custom post type", "cpt", "custom taxonomy"],
+    "type"       : "wordpress-plugin",
+    "license"    : "GPL-2.0+",
+    "authors"     : [
+    {
+        "name"    : "Peter Elmered",
+        "email"   : "peter@elmered.com",
+        "homepage": "http://www.elmered.com"
+    }
+    ],
+    "support"     : {
+        "issues": "https://github.com/pelmered/Post-types-creator/issues"
+    },
+    "require"    : {
+        "composer/installers": "~1.0"
+    }
 }
 
