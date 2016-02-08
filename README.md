@@ -9,6 +9,7 @@ Current version need Advanced Custom Fields to be installed for sorting to work.
 
 - [Features](#features)
 - [Planned features](#planned-features)
+- [Common problems & troubleshooting](#common-problems-&-troubleshooting)
 - [Installation](#installation)
   - [Composer](#composer)
   - [Normal manual install](#normal-manual-install)
@@ -38,6 +39,15 @@ Current version need Advanced Custom Fields to be installed for sorting to work.
 
 ##Planned features
 - Unit tests
+- Use new merm meta functionality for sorting for WordPress 4.4+
+
+## test
+
+test
+
+##Common problems & troubleshooting
+
+The plugin is very simple to use if you know basic PHP. Most of the problems you are likely to run into is related to WordPress built in permalink cache or messed up or nonexistin meta data for sorting(the posts will not show up in the post linst in wp-admin). To fix both those problems. Just add `&ptc-reinit=1` to the URL/querystring anywhere in wp-admin to run a force reinitialization that will fix the problems, for example: `http://example.com/wp-admin/edit.php?post_type=page&ptc-reinit=1`
 
 ##Installation
 
