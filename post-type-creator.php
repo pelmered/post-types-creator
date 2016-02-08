@@ -82,7 +82,7 @@ class PE_Post_Type_Creator {
             {
                 $sort_meta_key = $this->get_sort_meta_key( $post_slug );
 
-                $args = array(
+                $args = array (
                     'posts_per_page'   => -1,
                     'post_type'        => $post_slug,
                     'post_status'      => 'publish',

@@ -8,6 +8,7 @@ Current version need Advanced Custom Fields to be installed for sorting to work.
 **Contents**
 
 - [Features](#features)
+- [Planned features](#planned-features)
 - [Installation](#installation)
   - [Composer](#composer)
   - [Normal manual install](#normal-manual-install)
