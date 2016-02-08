@@ -9,6 +9,8 @@ Current version need Advanced Custom Fields to be installed for sorting to work.
 
 - [Features](#features)
 - [Planned features](#planned-features)
+- [test2](#test2)
+- [test3](#test3)
 - [Common problems & troubleshooting](#common-problems-&-troubleshooting)
 - [Installation](#installation)
   - [Composer](#composer)
