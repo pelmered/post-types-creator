@@ -52,18 +52,16 @@ class PE_Post_Type_Creator {
 
         add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );
 
-        if( is_admin() && isset( $_GET['pe-ptc-reinit'] ) )
+        if( is_admin() && isset( $_GET['ptc-reinit'] ) )
         {
             $this->force_reinitialize();
         }
-        else
-        {
-            // Sort posts
-            add_filter('pre_get_posts', array( $this, 'sort_admin_post_list' ) );
 
-            // Sort terms
-            add_filter('get_terms_orderby', array( $this, 'sort_get_terms' ), 10, 3 );
-        }
+        // Sort posts
+        add_filter('pre_get_posts', array( $this, 'sort_admin_post_list' ) );
+
+        // Sort terms
+        add_filter('get_terms_orderby', array( $this, 'sort_get_terms' ), 10, 3 );
     }
 
     /**
@@ -77,7 +75,6 @@ class PE_Post_Type_Creator {
 
         foreach( $this->post_types AS $post_slug => $post_args )
         {
-
             if( isset($post_args['sortable']) && $post_args['sortable'] )
             {
                 $sort_meta_key = $this->get_sort_meta_key( $post_slug );

@@ -47,12 +47,6 @@ function My_Post_Type_Creator()
                 'post_statuses' => array(
                     // 'slug' => array($args_array)
                     // https://codex.wordpress.org/Function_Reference/register_post_status
-                    'pending'   => array(
-                        'singular_label'            => _x('Pending', 'Post status singular', $text_domain),
-                        'plural_label'              => _x('Pending', 'Post status plural', $text_domain),
-                        'public'                    => true,
-                        'show_in_admin_status_list' => true
-                    ),
                     'active'   => array(
                         'singular_label'            => _x('Active', 'Post status singular', $text_domain),
                         'plural_label'              => _x('Active', 'Post status plural', $text_domain),
