@@ -94,8 +94,8 @@ $text_domain = 'text-domain';
         
 $ptc->set_post_types(array(
     'stores' => array(
-        'singular_label' => _x('store', 'Post type plural', $text_domain),
-        'plural_label'  => _x('stores', 'Post type singular', $text_domain)
+        'singular_label' => _x('store', 'Post type singular', $text_domain),
+        'plural_label'  => _x('stores', 'Post type plural', $text_domain)
     )
 ));
 
@@ -111,8 +111,8 @@ $text_domain = 'text-domain';
         
 $ptc->set_post_types(array(
     'stores' => array(
-        'singular_label' => _x('store', 'Post type plural', $text_domain),
-        'plural_label'  => _x('stores', 'Post type singular', $text_domain),
+        'singular_label' => _x('store', 'Post type singular', $text_domain),
+        'plural_label'  => _x('stores', 'Post type plural', $text_domain),
         'description'   => _x('All company stores', 'Post type description', $text_domain),
         
         // Make post type drag and drop sortable in admin list view (default: false)
@@ -152,8 +152,8 @@ $text_domain = 'text-domain';
 
 $ptc->set_taxonomies(array(
     'area' => array(
-        'singular_label' => _x('area', 'Post type plural', $text_domain),
-        'plural_label'  => _x('areas', 'Post type singular', $text_domain),
+        'singular_label' => _x('area', 'Post type singular', $text_domain),
+        'plural_label'  => _x('areas', 'Post type plural', $text_domain),
         'description'   => _x('Areas for grouping stores', 'Post type description', $text_domain),
         'post_type'    => 'stores',
         
