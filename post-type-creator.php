@@ -11,7 +11,7 @@
  */
 
 
-class PE_Post_Type_Creator {
+class Post_Type_Creator {
 
     private $plugin_slug = 'post-type-creator';
     private $text_domain = 'post-type-creator';
@@ -23,7 +23,7 @@ class PE_Post_Type_Creator {
 
 
     /**
-     * PE_Post_Type_Creator constructor. Should be called on plugins_loaded action
+     * Post_Type_Creator constructor. Should be called on plugins_loaded action
      * @param array $options
      */
     function __construct( $options = array() )

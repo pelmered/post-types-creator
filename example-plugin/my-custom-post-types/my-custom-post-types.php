@@ -15,14 +15,14 @@ add_action('plugins_loaded', 'My_Post_Type_Creator');
 function My_Post_Type_Creator()
 {
     // Check that the main plugin is loaded. If not, do noting
-    if( class_exists( 'PE_Post_Type_Creator' ) )
+    if( class_exists( 'Post_Type_Creator' ) )
     {
         $text_domain = 'my-custom-post-types';
 
         $locale = apply_filters( 'plugin_locale', get_locale(), $text_domain );
         load_plugin_textdomain( $text_domain, false, plugin_basename( dirname( __FILE__ ) ) . "/languages" );
         
-        $ptc = new PE_Post_Type_Creator();
+        $ptc = new Post_Type_Creator();
         
         $ptc->set_post_types(array(
             'stores' => array(
