@@ -19,6 +19,8 @@ class Post_Type_Creator {
     public $post_types = array();
     public $taxonomies = array();
 
+    public $taxonomy_filters = array();
+
     public $use_acf = false;
 
 
@@ -59,6 +61,10 @@ class Post_Type_Creator {
 
         // Sort posts
         add_filter('pre_get_posts', array( $this, 'sort_admin_post_list' ) );
+
+        // Restrict posts based on taxonomy filters
+        add_action('restrict_manage_posts', array( $this, 'restrict_admin_posts_by_taxonomy' ) );
+        add_filter('parse_query', array( $this, 'add_terms_filter_to_query' ) );
 
         // Sort terms
         add_filter('get_terms_orderby', array( $this, 'sort_get_terms' ), 10, 3 );
@@ -309,6 +315,20 @@ class Post_Type_Creator {
                     }
                 }
 
+                if( isset($post_args['taxonomy_filters']))
+                {
+
+                    if ( $post_args['taxonomy_filters'] === true )
+                    {
+                        $this->taxonomy_filters[$slug] = $post_args['taxonomies'];
+                    }
+                    elseif (is_array($post_args['taxonomy_filters']) && !empty( $post_args['taxonomy_filters'] ) )
+                    {
+                        $this->taxonomy_filters[$slug] = $post_args['taxonomy_filters'];
+                    }
+
+                }
+
                 if( $post_args['sortable'] &&
                     //in_array( $current_post_type, array_keys( $this->post_types ) ) &&
                     isset($this->post_types[$current_post_type]['sortable']) &&
@@ -474,6 +494,67 @@ class Post_Type_Creator {
 
         return $wp_query;
     }
+
+    function restrict_admin_posts_by_taxonomy()
+    {
+        global $typenow;
+
+
+        $post_type = $this->get_current_post_type();
+
+        if( isset( $this->taxonomy_filters[$post_type] ) && is_array( $this->taxonomy_filters[$post_type] ) )
+        {
+            foreach( $this->taxonomy_filters[$post_type] AS $taxonomy )
+            {
+                $selected = isset($_GET[$taxonomy]) ? $_GET[$taxonomy] : '';
+                $info_taxonomy = get_taxonomy($taxonomy);
+                wp_dropdown_categories(array(
+                    'show_option_all' => __("Show All {$info_taxonomy->label}"),
+                    'taxonomy' => $taxonomy,
+                    'name' => $taxonomy,
+                    'orderby' => 'name',
+                    'selected' => $selected,
+                    'show_count' => true,
+                    'hide_empty' => true,
+                ));
+            }
+        }
+
+    }
+
+    function add_terms_filter_to_query($query) {
+        global $pagenow;
+
+        if ($pagenow != 'edit.php' )
+        {
+            return $query;
+        }
+
+        $post_type = $this->get_current_post_type();
+
+        if( isset( $this->taxonomy_filters[$post_type] ) && is_array( $this->taxonomy_filters[$post_type] ) )
+        {
+            foreach( $this->taxonomy_filters[$post_type] AS $taxonomy )
+            {
+                $query_vars = $query->query_vars;
+
+                if(
+                    isset($query_vars['post_type']) &&
+                    $query_vars['post_type'] == $post_type &&
+                    isset($query_vars[$taxonomy]) &&
+                    is_numeric($query_vars[$taxonomy])
+                    && $query_vars[$taxonomy] != 0
+                )
+                {
+                    $term = get_term_by('id', $query_vars[$taxonomy], $taxonomy);
+                    $query->query_vars[$taxonomy] = $term->slug;
+                }
+            }
+        }
+
+        return $query;
+    }
+
 
     /**
      * Gets slug of current post type in admin views
@@ -684,4 +765,3 @@ class Post_Type_Creator {
 
 
 }
-

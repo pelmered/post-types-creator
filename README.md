@@ -117,7 +117,7 @@ $ptc->set_post_types(array(
         
         // Make post type drag and drop sortable in admin list view (default: false)
         'sortable'      => true,
-        'filters' 		 => true,
+        'taxonomy_filters' => true,
         'admin_columns' => array(
             'image' => array(
                 //Column header/label
@@ -246,10 +246,7 @@ $generated_args = array(
 
 Pass `true` for making filters of all taxonomies for the post type
 
-
-            'admin_columns'         => array(),
-            'sortable'              => false,
-            'filters'               => false,
+            'taxonomy_filters'               => false,
 
 ### Overriding `register_post_status()` defaults
 
