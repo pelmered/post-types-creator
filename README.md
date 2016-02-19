@@ -102,7 +102,7 @@ $ptc->set_post_types(array(
 add_action( 'init', array($ptc, 'init'), 0 );
 ```
 
-####Example / typical:
+#####Example / typical:
 Same as minimal, but allso adds a description, makes it drag and drop sortable in the admin list, adds a custom admin column and overides some ` register_post_type() ` defaults, for example connecting the taxonomy ` area `(see example below).
 
 ```php
@@ -117,6 +117,7 @@ $ptc->set_post_types(array(
         
         // Make post type drag and drop sortable in admin list view (default: false)
         'sortable'      => true,
+        'filters' 		 => true,
         'admin_columns' => array(
             'image' => array(
                 //Column header/label
@@ -143,7 +144,7 @@ function example_get_featured_image_column( $post_id )
 }
 ```
 
-###Adding taxonomies:
+####Adding taxonomies:
 Typical taxonomy that is drag and drop sortable in the normal admin list view and connected to the ` stores ` post type in the example above.
 
 ```php
@@ -169,5 +170,88 @@ $ptc->set_taxonomies(array(
 add_action( 'init', array($ptc, 'init'), 0 );
 ```
 
-### More examples / Example plugin
-For more examples, or help to get started see the example plugin in ` example-plugin/my-custom-post-types.php `. Copy the example plugin to your plugins directory for the fastest way to get started.
+##### For more examples, or help to get started see the example plugin in ` example/example-plugin.php `. Copy the example plugin to your plugins directory for the fastest way to get started.
+
+
+##Documentation
+
+### Adding features to post types from core or other plugins
+
+Example for adding sortable to WooCommerce product categories
+
+```php
+$ptc->set_taxonomies(array(
+    'product_cat' => array(
+        'register'      => false,
+        'post_type'     => array( 'product' ),
+        'sortable'      => true,
+    ),
+));
+```
+
+
+### Labels & description
+
+You only need to send in a singular and a plural version of the post type label, all other labels are automatically generated.
+
+If you want to override something, you can hook into the filter `pe_ptc_post_type_labels` like this:
+
+```php
+add_filter( 'pe_ptc_post_type_labels', 
+	function( $generated_args, $post_type_slug, $post_type_args ) {
+		
+		// do what you want with $generated_args
+		//And then return it back to the plugin
+		return $generated_args;
+	}, 
+10, 3)
+```
+
+
+```php
+$post_type['singular_label_ucf'] = ucfirst($post_type['singular_label']);
+$post_type['plural_label_ucf'] = ucfirst($post_type['plural_label']);
+
+$generated_args = array(
+    'label'               => __( $post_slug, $this->text_domain ),
+    'description'         => __( $post_type['plural_label_ucf'], $this->text_domain ),
+    'labels'              => array(
+        'name'                  => _x( $post_type['plural_label_ucf'], 'Post Type General Name', $this->text_domain ),
+        'singular_name'         => _x( $post_type['singular_label_ucf'], 'Post Type Singular Name', $this->text_domain ),
+        'menu_name'             => __( $post_type['plural_label_ucf'], $this->text_domain ),
+        'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $post_type['singular_label']),
+        //'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $post_type['singular_label']),
+        'all_items'             => sprintf(__( 'All %s', $this->text_domain ), $post_type['plural_label']),
+        'view'                  => sprintf(__( 'View %s', $this->text_domain ), $post_type['singular_label']),
+        'view_item'             => sprintf(__( 'View %s', $this->text_domain ), $post_type['singular_label']),
+        'add_new'               => sprintf(__( 'Add %s', $this->text_domain ), $post_type['singular_label']),
+        'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $post_type['singular_label']),
+        'edit'                  => __( 'Edit', $this->text_domain ),
+        'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $post_type['singular_label']),
+        'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $post_type['singular_label']),
+        'search_items'          => sprintf( __('Search %s', $this->text_domain), $post_type['plural_label']),
+        'not_found'             => sprintf(__( 'No %s found', $this->text_domain ), $post_type['plural_label']),
+        'not_found_in_trash'    => sprintf(__( 'No %s found in trash', $this->text_domain ), $post_type['plural_label']),
+    ),
+);
+```
+
+### Extra arguments
+
+#### admin_columns
+
+#### sortable
+
+#### Taxonomy filters
+
+Pass `true` for making filters of all taxonomies for the post type
+
+
+            'admin_columns'         => array(),
+            'sortable'              => false,
+            'filters'               => false,
+
+### Overriding `register_post_status()` defaults
+
+All the defaults and arguments that you can pass in to [`register_post_status()`](https://codex.wordpress.org/Function_Reference/register_post_status)
+
