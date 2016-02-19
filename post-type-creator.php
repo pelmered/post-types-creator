@@ -180,7 +180,7 @@ class Post_Type_Creator {
         $generated_args = array(
             'label'               => __( $post_slug, $this->text_domain ),
             'description'         => __( $post_type['plural_label_ucf'], $this->text_domain ),
-            'labels'              => $this->get_post_type_labels( $post_type ),
+            'labels'              => $this->get_post_type_labels( $post_slug, $post_type ),
         );
 
         $default_args = array(
