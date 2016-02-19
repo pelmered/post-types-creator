@@ -11,7 +11,7 @@
  */
 
 
-class Post_Type_Creator {
+class Post_Types_Creator {
 
     private $plugin_slug = 'post-type-creator';
     private $text_domain = 'post-type-creator';
