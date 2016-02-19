@@ -135,6 +135,37 @@ class Post_Type_Creator {
     }
 
     /**
+     * @param $post_type
+     * @return mixed|null|void
+     */
+    function get_post_type_labels( $post_slug, $post_type )
+    {
+        $labels = array (
+            'name'                  => _x( $post_type['plural_label_ucf'], 'Post Type General Name', $this->text_domain ),
+            'singular_name'         => _x( $post_type['singular_label_ucf'], 'Post Type Singular Name', $this->text_domain ),
+            'menu_name'             => __( $post_type['plural_label_ucf'], $this->text_domain ),
+            'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $post_type['singular_label']),
+            //'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $post_type['singular_label']),
+            'all_items'             => sprintf(__( 'All %s', $this->text_domain ), $post_type['plural_label']),
+            'view'                  => sprintf(__( 'View %s', $this->text_domain ), $post_type['singular_label']),
+            'view_item'             => sprintf(__( 'View %s', $this->text_domain ), $post_type['singular_label']),
+            'add_new'               => sprintf(__( 'Add %s', $this->text_domain ), $post_type['singular_label']),
+            'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $post_type['singular_label']),
+            'edit'                  => __( 'Edit', $this->text_domain ),
+            'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $post_type['singular_label']),
+            'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $post_type['singular_label']),
+            'search_items'          => sprintf( __('Search %s', $this->text_domain), $post_type['plural_label']),
+            'not_found'             => sprintf(__( 'No %s found', $this->text_domain ), $post_type['plural_label']),
+            'not_found_in_trash'    => sprintf(__( 'No %s found in trash', $this->text_domain ), $post_type['plural_label']),
+        );
+
+        $labels = apply_filters( 'ptc_post_type_labels', $labels, $post_slug, $post_type );
+        $labels = apply_filters( 'ptc_post_type_labels_'.$post_slug, $labels, $post_type );
+
+        return $labels;
+    }
+
+    /**
      * Generates all post type labels and merges the labels and default values with the values passed to the plugin
      *
      * @param $post_slug - Post type slug
@@ -149,24 +180,7 @@ class Post_Type_Creator {
         $generated_args = array(
             'label'               => __( $post_slug, $this->text_domain ),
             'description'         => __( $post_type['plural_label_ucf'], $this->text_domain ),
-            'labels'              => array(
-                'name'                  => _x( $post_type['plural_label_ucf'], 'Post Type General Name', $this->text_domain ),
-                'singular_name'         => _x( $post_type['singular_label_ucf'], 'Post Type Singular Name', $this->text_domain ),
-                'menu_name'             => __( $post_type['plural_label_ucf'], $this->text_domain ),
-                'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $post_type['singular_label']),
-                'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $post_type['singular_label']),
-                'all_items'             => sprintf(__( 'All %s', $this->text_domain ), $post_type['plural_label']),
-                'view'                  => sprintf(__( 'View %s', $this->text_domain ), $post_type['singular_label']),
-                'view_item'             => sprintf(__( 'View %s', $this->text_domain ), $post_type['singular_label']),
-                'add_new'               => sprintf(__( 'Add %s', $this->text_domain ), $post_type['singular_label']),
-                'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $post_type['singular_label']),
-                'edit'                  => __( 'Edit', $this->text_domain ),
-                'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $post_type['singular_label']),
-                'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $post_type['singular_label']),
-                'search_items'          => sprintf( __('Search %s', $this->text_domain), $post_type['plural_label']),
-                'not_found'             => sprintf(__( 'No %s found', $this->text_domain ), $post_type['plural_label']),
-                'not_found_in_trash'    => sprintf(__( 'No %s found in trash', $this->text_domain ), $post_type['plural_label']),
-            ),
+            'labels'              => $this->get_post_type_labels( $post_type ),
         );
 
         $default_args = array(
@@ -185,6 +199,33 @@ class Post_Type_Creator {
         return wp_parse_args(array_merge( $generated_args, $post_type ), $default_args);
     }
 
+    function get_taxonomy_labels( $taxonomy_slug, $taxonomy )
+    {
+        $labels = array (
+            'name'                  => _x( $taxonomy['plural_label_ucf'], 'Taxonomy General Name', $this->text_domain ),
+            'singular_name'         => _x( $taxonomy['singular_label_ucf'], 'Taxonomy Singular Name', $this->text_domain ),
+            'menu_name'             => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
+            'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['singular_label']),
+            'parent_item'           => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['singular_label']),
+            'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $taxonomy['singular_label']),
+            'new_item_name'         => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['singular_label']),
+            'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['singular_label']),
+            'edit'                  => __( 'Edit', $this->text_domain ),
+            'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $taxonomy['singular_label']),
+            'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $taxonomy['singular_label']),
+            'separate_items_with_commas' => __( 'Separate items with commas', $this->text_domain ),
+            'search_items'          => sprintf( __('Search %s', $this->text_domain), $taxonomy['plural_label']),
+            'add_or_remove_items'   => __( 'Add or remove %s', $taxonomy['plural_label'] ),
+            'choose_from_most_used' => __( 'Choose from the most used items', $this->text_domain ),
+            'not_found'             => sprintf(__( 'No %s found', $this->text_domain ), $taxonomy['plural_label']),
+        );
+
+        $labels = apply_filters( 'ptc_taxonomy_labels', $labels, $taxonomy_slug, $taxonomy );
+        $labels = apply_filters( 'ptc_taxonomy_labels_'.$taxonomy_slug, $labels, $taxonomy );
+
+        return $labels;
+    }
+
     /**
      * Generates all taxonomy labels and merges the labels and default values with the values passed to the plugin
      *
@@ -200,24 +241,7 @@ class Post_Type_Creator {
         $generated_args = array(
             'label'               => __( $taxonomy_slug, $this->text_domain ),
             'description'         => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
-            'labels'              => array(
-                'name'                  => _x( $taxonomy['plural_label_ucf'], 'Taxonomy General Name', $this->text_domain ),
-                'singular_name'         => _x( $taxonomy['singular_label_ucf'], 'Taxonomy Singular Name', $this->text_domain ),
-                'menu_name'             => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
-                'parent'                => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['singular_label']),
-                'parent_item'           => sprintf(__( 'Parent %s', $this->text_domain ), $taxonomy['singular_label']),
-                'parent_item_colon'     => sprintf(__( 'Parent %s:', $this->text_domain ), $taxonomy['singular_label']),
-                'new_item_name'         => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['singular_label']),
-                'add_new_item'          => sprintf(__( 'Add new %s', $this->text_domain ), $taxonomy['singular_label']),
-                'edit'                  => __( 'Edit', $this->text_domain ),
-                'edit_item'             => sprintf(__( 'Edit %s', $this->text_domain ), $taxonomy['singular_label']),
-                'update_item'           => sprintf(__( 'Update %s', $this->text_domain ), $taxonomy['singular_label']),
-                'separate_items_with_commas' => __( 'Separate items with commas', $this->text_domain ),
-                'search_items'          => sprintf( __('Search %s', $this->text_domain), $taxonomy['plural_label']),
-                'add_or_remove_items'   => __( 'Add or remove %s', $taxonomy['plural_label'] ),
-                'choose_from_most_used' => __( 'Choose from the most used items', $this->text_domain ),
-                'not_found'             => sprintf(__( 'No %s found', $this->text_domain ), $taxonomy['plural_label']),
-            ),
+            'labels'              => $this->get_taxonomy_labels( $taxonomy_slug, $taxonomy )
         );
 
         $default_args = array(
