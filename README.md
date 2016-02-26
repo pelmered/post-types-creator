@@ -39,7 +39,8 @@ Helper plugin that provides an easy interface for creating fully translated cust
 - Integration with Advanced Custom Fields(optional)
 
 ##Planned features
-- Unit tests
+- More unit tests
+- Scaffolding command for WP-CLI to genereate plugin
 - Use new merm meta functionality for sorting for WordPress 4.4+
 
 ##Common problems & troubleshooting
