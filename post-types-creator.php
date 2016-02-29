@@ -29,7 +29,7 @@ class Post_Types_Creator {
      * Post_Type_Creator constructor. Should be called on plugins_loaded action
      * @param array $options
      */
-    function __construct( $options = array() )
+    public function __construct( $options = array() )
     {
         if( isset( $options['text_domain'] ) )
         {
@@ -618,7 +618,7 @@ class Post_Types_Creator {
             (is_array( $post_type ) ? in_array( $current_post_type, $post_type ) : $current_post_type == $post_type ) )
         )
         {
-            return sanitize_key( $_REQUEST['taxonomy'] );
+            return sanitize_key( $current_taxonomy );
         }
         else
         {
@@ -706,7 +706,7 @@ class Post_Types_Creator {
 
         wp_send_json( array( 'status' => 'ok' ) );
 
-        die();
+        wp_die();
     }
 
 
