@@ -10,7 +10,7 @@ class TaxonomiesTest extends WP_UnitTestCase {
 
 		$taxonomies = get_taxonomies();
 
-		$this->assertTrue( in_array('business_unit', $taxonomies) );
+		$this->assertContains( 'business_unit', $taxonomies );
 	}
 
 	function test_insert_term( )
@@ -20,6 +20,12 @@ class TaxonomiesTest extends WP_UnitTestCase {
 		for( $i = 0; $i < 4; $i++ )
 		{
 			$ids = wp_insert_term( 'random string'.$i, 'business_unit' );
+
+			if( is_wp_error( $ids ) )
+			{
+				$this->assertTrue( false );
+				continue;
+			}
 
 			if( $i != 0 )
 			{

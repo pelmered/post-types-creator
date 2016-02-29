@@ -16,7 +16,7 @@ function _manually_load_plugin() {
 
 	require $plugin_base_dir . '/post-types-creator.php';
 
-	require_once $plugin_base_dir . '/example-plugin/my-custom-post-types/my-custom-post-types.php';
+	require_once 'initialize-plugin.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
