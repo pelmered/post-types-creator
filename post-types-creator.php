@@ -10,6 +10,8 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
+namespace PE;
+
 
 class Post_Types_Creator {
 

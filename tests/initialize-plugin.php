@@ -6,7 +6,7 @@ $text_domain = 'my-custom-post-types';
 $locale = apply_filters( 'plugin_locale', get_locale(), $text_domain );
 load_plugin_textdomain( $text_domain, false, plugin_basename( dirname( __FILE__ ) ) . "/languages" );
 */
-$ptc = new Post_Types_Creator();
+$ptc = new \PE\Post_Types_Creator();
 
 $ptc->set_post_types(array(
     'stores' => array(
