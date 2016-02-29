@@ -589,7 +589,7 @@ class Post_Types_Creator {
                 return sanitize_key( $post_type );
             }
 
-            $post_type = filter_input( INPUT_POST, 'post_type', FILTER_SANITIZE_STRING )
+            $post_type = filter_input( INPUT_POST, 'post_type', FILTER_SANITIZE_STRING );
 
             if( !empty( $post_type ) )
             {
