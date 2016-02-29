@@ -580,16 +580,22 @@ class Post_Types_Creator {
         {
             return $current_screen->post_type;
         }
-        elseif( !empty( $post_type = filter_input( INPUT_GET, 'post_type', FILTER_SANITIZE_STRING ) ) )
-        {
-            return sanitize_key( $post_type );
-        }
-        elseif( !empty( $post_type = filter_input( INPUT_POST, 'post_type', FILTER_SANITIZE_STRING ) ) )
-        {
-            return sanitize_key( $post_type );
-        }
         else
         {
+            $post_type = filter_input( INPUT_GET, 'post_type', FILTER_SANITIZE_STRING ) );
+
+            if( !empty( $post_type ) )
+            {
+                return sanitize_key( $post_type );
+            }
+
+            $post_type = filter_input( INPUT_POST, 'post_type', FILTER_SANITIZE_STRING ) )
+
+            if( !empty( $post_type ) )
+            {
+                return sanitize_key( $post_type );
+            }
+
             return null;
         }
     }
