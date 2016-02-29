@@ -3,16 +3,16 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 */
-/* 
+/*
     Created on : Feb 23, 2015, 3:22:51 PM
     Author     : peter
 */
 
 tr.pe-ptc-highlight
 {
-    height: 170px;
+	height: 170px;
 }
 
 #the-list tr.ui-sortable-handle {
-    cursor: row-resize;
+	cursor: row-resize;
 }
