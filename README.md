@@ -92,7 +92,7 @@ $options = array(
   'use_acf' => true
 );
 
-$ptc = new Post_Type_Creator();
+$ptc = new \PE\Post_Type_Creator();
 $text_domain = 'text-domain';
         
 $ptc->set_post_types(array(
@@ -109,7 +109,7 @@ add_action( 'init', array($ptc, 'init'), 0 );
 Same as minimal, but allso adds a description, makes it drag and drop sortable in the admin list, adds a custom admin column and overides some ` register_post_type() ` defaults, for example connecting the taxonomy ` area `(see example below).
 
 ```php
-$ptc = new Post_Type_Creator();
+$ptc = new \PE\Post_Type_Creator();
 $text_domain = 'text-domain';
         
 $ptc->set_post_types(array(
@@ -151,7 +151,7 @@ function example_get_featured_image_column( $post_id )
 Typical taxonomy that is drag and drop sortable in the normal admin list view and connected to the ` stores ` post type in the example above.
 
 ```php
-$ptc = new Post_Type_Creator();
+$ptc = new \PE\Post_Type_Creator();
 $text_domain = 'text-domain';
 
 $ptc->set_taxonomies(array(
