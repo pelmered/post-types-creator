@@ -1,0 +1,44 @@
+filter:
+  excluded_paths:
+    - bin/*
+    - languages/*
+    - tests/*
+
+checks:
+  php:
+    code_rating: true
+    coding_standard: WordPress
+
+tools:
+  external_code_coverage: false
+
+  php_cs_fixer:
+    enabled: true
+    filter:
+      excluded_paths:
+        - bin/*
+        - languages/*
+        - tests/*
+    extensions:
+      - php
+
+  php_sim:
+    enabled: true
+    min_mass: 30
+
+  php_pdepend:
+    enabled: true
+    configuration_file: null
+    suffixes:
+      - php
+
+  php_analyzer:
+    enabled: true
+    extensions:
+      - php
+
+  php_hhvm:
+    enabled: true
+    command: hhvm
+    extensions:
+      - php
