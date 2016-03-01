@@ -7,7 +7,8 @@ filter:
 checks:
   php:
     code_rating: true
-    coding_standard: WordPress
+    custom_coding_standard:
+      ruleset_path: 'phpcs.xml'
 
 tools:
   external_code_coverage: false
