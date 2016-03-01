@@ -2,10 +2,6 @@
 
 class TaxonomiesTest extends WP_UnitTestCase {
 
-	static function setUpBeforeClass() {
-		require 'bootstrap-taxonomies.php';
-	}
-
 	function test_taxonomy_registered() {
 
 		$taxonomies = get_taxonomies();

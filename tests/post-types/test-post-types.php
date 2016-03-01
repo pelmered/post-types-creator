@@ -2,10 +2,6 @@
 
 class PostTypesTest extends WP_UnitTestCase {
 
-	static function setUpBeforeClass() {
-		require 'bootstrap-post-types.php';
-	}
-
 	function test_cpt_registered() {
 
 		$post_types = get_post_types();
