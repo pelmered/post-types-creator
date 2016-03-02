@@ -300,11 +300,11 @@ class Post_Types_Creator {
 
 	private function register_post_statuses( $post_args ) {
 
-		if ( empty( $post_args['admin_columns'] ) || ! is_array( $post_args['admin_columns'] ) ) {
+		if ( empty( $post_args['post_statuses'] ) || ! is_array( $post_args['post_statuses'] ) ) {
 			return null;
 		}
 
-		foreach ($post_args['admin_columns'] as $post_status_slug => $post_status_args ) {
+		foreach ($post_args['post_statuses'] as $post_status_slug => $post_status_args ) {
 
 			$post_status_args['label'] = $post_status_args['singular_label'];
 			$post_status_args['label_count'] = _n_noop(
