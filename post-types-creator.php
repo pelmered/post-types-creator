@@ -1,6 +1,7 @@
 <?php
 /**
  * Plugin Name: Post types creator
+ * Plugin URI:
  * Description: Helper plugin for easily creating localize-ready custom post types and custom taxonomies with extra functionality in WordPress
  * Version:     0.2.0
  * Author:      Peter Elmered
@@ -46,7 +47,7 @@ class Post_Types_Creator {
 	 */
 	public function init() {
 
-		add_action( 'wp_ajax_pe_ptc_sort_posts', [$this, 'sortable_ajax_handler'] );
+		add_action( 'wp_ajax_pe_ptc_sort_posts', [ $this, 'sortable_ajax_handler' ] );
 
 		$this->register_post_types();
 		$this->register_taxonomies();
@@ -114,7 +115,7 @@ class Post_Types_Creator {
 		$parsed_post_types = [];
 
 		foreach ( $post_types as $slug => $post_type ) {
-			$parsed_post_types[$slug] = $this->parse_post_type_args( $slug, $post_type );
+			$parsed_post_types[ $slug ] = $this->parse_post_type_args( $slug, $post_type );
 		}
 
 		$this->post_types = $parsed_post_types;
@@ -130,7 +131,7 @@ class Post_Types_Creator {
 		$parsed_taxonomies = [];
 
 		foreach ( $taxonomies as $slug => $post_type ) {
-			$parsed_taxonomies[$slug] = $this->parse_taxonomy_args( $slug, $post_type );
+			$parsed_taxonomies[ $slug ] = $this->parse_taxonomy_args( $slug, $post_type );
 		}
 
 		$this->taxonomies = $parsed_taxonomies;
@@ -187,8 +188,8 @@ class Post_Types_Creator {
 
 		$default_args = [
 			// Override some defaults to cover most cases out of the box
-			'supports'              => [ 'title', 'editor', 'thumbnail', ],
-			'taxonomies'            => [ ],
+			'supports'              => [ 'title', 'editor', 'thumbnail' ],
+			'taxonomies'            => [],
 			'public'                => true,
 			'menu_position'         => 6,   //Below posts
 			'has_archive'           => true,
@@ -243,7 +244,7 @@ class Post_Types_Creator {
 		$generated_args = [
 			'label'               => __( $taxonomy_slug, $this->text_domain ),
 			'description'         => __( $taxonomy['plural_label_ucf'], $this->text_domain ),
-			'labels'              => $this->get_taxonomy_labels( $taxonomy_slug, $taxonomy )
+			'labels'              => $this->get_taxonomy_labels( $taxonomy_slug, $taxonomy ),
 		];
 
 		$default_args = [
@@ -261,7 +262,7 @@ class Post_Types_Creator {
 			// https://codex.wordpress.org/Function_Reference/register_taxonomy
 			'rewrite' => [
 				'slug' => sanitize_title( $taxonomy['plural_label'] ),
-			]
+			],
 		];
 
 		return wp_parse_args( array_merge( $generated_args, $taxonomy ), $default_args );
@@ -275,61 +276,133 @@ class Post_Types_Creator {
 		$post_types = $this->post_types;
 
 		foreach ($post_types as $slug => $post_args ) {
+
+			$post_args = apply_filters( 'ptc_post_type_args', $post_args, $slug );
+			$post_args = apply_filters( 'ptc_post_type_args_'.$slug, $post_args );
+
 			register_post_type( $slug, $post_args );
 
-			if ( isset( $post_args['post_statuses'] ) && ! empty( $post_args['post_statuses'] ) && is_array( $post_args['post_statuses'] ) ) {
-				foreach ( $post_args['post_statuses'] as $post_status_slug => $post_status_args ) {
-
-					$post_status_args['label'] = $post_status_args['singular_label'];
-					$post_status_args['label_count'] = _n_noop(
-						$post_status_args['singular_label'].' <span class="count">(%s)</span>',
-						$post_status_args['plural_label'].' <span class="count">(%s)</span>',
-						$this->text_domain
-					);
-
-					register_post_status( $post_status_slug, $post_status_args );
-				}
-			}
+			$this->register_post_statuses( $post_args );
 
 			if ( is_admin() ) {
-				$current_post_type = $this->get_current_post_type();
 
 				add_action( 'admin_footer-post.php', [ $this, 'append_post_status_list' ] );
 
-				if ( isset( $post_args['admin_columns'] ) ) {
-					foreach ( $post_args['admin_columns'] as $column ) {
-						add_filter( 'manage_posts_columns' , [$this, 'add_admin_column'], 10, 2 );
+				$this->add_taxonomy_filters( $slug, $post_args );
 
-						add_action( 'manage_'.$slug.'_posts_custom_column' , [$this, 'add_admin_column_content'], 10, 2 );
-					}
-				}
+				$this->register_admin_columns( $slug, $post_args );
 
-				if ( isset( $post_args['taxonomy_filters'] ) ) {
-
-					if ( $post_args['taxonomy_filters'] === true ) {
-						$this->taxonomy_filters[$slug] = $post_args['taxonomies'];
-					}
-					elseif (is_array( $post_args['taxonomy_filters'] ) && ! empty( $post_args['taxonomy_filters'] ) ) {
-						$this->taxonomy_filters[$slug] = $post_args['taxonomy_filters'];
-					}
-				}
-
-				if ( $post_args['sortable'] &&
-					isset( $this->post_types[$current_post_type]['sortable'] ) &&
-					$this->post_types[$current_post_type]['sortable'] == true
-				) {
-					wp_enqueue_script( 'jquery-ui-core' );
-					wp_enqueue_script( 'jquery-ui-sortable' );
-
-					wp_enqueue_script( 'pe-post-type-creator-sortable', plugins_url( '', __FILE__ ) . '/assets/js/sortable.js', ['jquery', 'jquery-ui-core', 'jquery-ui-sortable'] );
-					wp_enqueue_style( 'pe-post-type-creator-sortable', plugins_url( '', __FILE__ ) . '/assets/css/sortable.css', [] );
-				}
-				else {
-					$this->post_types[$slug]['sortable'] = false;
-				}
 			}
 		}
 
+		$this->register_sortable( $slug, $post_args );
+	}
+
+	private function register_post_statuses( $post_args ) {
+
+		if ( empty( $post_args['admin_columns'] ) || ! is_array( $post_args['admin_columns'] ) ) {
+			return null;
+		}
+
+		foreach ($post_args['admin_columns'] as $post_status_slug => $post_status_args ) {
+
+			$post_status_args['label'] = $post_status_args['singular_label'];
+			$post_status_args['label_count'] = _n_noop(
+				$post_status_args['singular_label'].' <span class="count">(%s)</span>',
+				$post_status_args['plural_label'].' <span class="count">(%s)</span>',
+				$this->text_domain
+			);
+
+			register_post_status( $post_status_slug, $post_status_args );
+		}
+	}
+
+	private function register_admin_columns( $slug, $post_args ) {
+
+		if ( isset( $post_args['admin_columns'] ) ) {
+			foreach ( $post_args['admin_columns'] as $column ) {
+				add_filter( 'manage_posts_columns' , [ $this, 'add_admin_column' ], 10, 2 );
+
+				add_action( 'manage_'.$slug.'_posts_custom_column' , [ $this, 'add_admin_column_content' ], 10, 2 );
+			}
+		}
+	}
+
+	private function add_taxonomy_filters( $slug, $post_args ) {
+
+		if ( isset( $post_args['taxonomy_filters'] ) ) {
+
+			if ( $post_args['taxonomy_filters'] === true ) {
+				$this->taxonomy_filters[ $slug ] = $post_args['taxonomies'];
+			}
+			elseif (is_array( $post_args['taxonomy_filters'] ) && ! empty( $post_args['taxonomy_filters'] ) ) {
+				$this->taxonomy_filters[ $slug ] = $post_args['taxonomy_filters'];
+			}
+		}
+	}
+
+	private function register_sortable( $slug, $args, $taxonomy = false ) {
+
+		if ( ! $args['sortable'] ) {
+			return;
+		}
+
+		if ( $taxonomy ) {
+			$current = $this->get_current_taxonomy( $args['post_type'] );
+
+			if ( $args['sortable'] &&
+				isset( $this->taxonomies[ $current ]['sortable'] ) &&
+				$this->taxonomies[ $current ]['sortable'] == true
+			) {
+
+				// Show all terms on the same page. Needed for drag and drop sorting to work.
+				// TODO: Better solution if there are many terms needed.
+				add_filter( 'edit_' . $slug . '_per_page', function() {
+					return 5000;
+				} );
+
+				$this->enqueue_sortable_scripts();
+			} else {
+				$this->taxonomies[ $slug ]['sortable'] = false;
+			}
+		} else {
+			$current = $this->get_current_post_type();
+
+			if ( $args['sortable'] &&
+				isset( $this->post_types[ $current ]['sortable'] ) &&
+				$this->post_types[ $current ]['sortable'] == true
+			) {
+
+				if ( $taxonomy ) {
+
+				}
+			} else {
+				$this->post_types[ $slug ]['sortable'] = false;
+			}
+		}
+
+		if ( $args['sortable'] &&
+			isset( $this->post_types[ $current ]['sortable'] ) &&
+			$this->post_types[ $current ]['sortable'] == true
+		) {
+
+			if ( $taxonomy ) {
+
+			}
+		}
+		else {
+			$this->post_types[ $slug ]['sortable'] = false;
+		}
+
+	}
+
+	private function enqueue_sortable_scripts() {
+
+		wp_enqueue_script( 'jquery-ui-core' );
+		wp_enqueue_script( 'jquery-ui-sortable' );
+
+		wp_enqueue_script( 'pe-post-type-creator-sortable', plugins_url( '', __FILE__ ) . '/assets/js/sortable.js', [ 'jquery', 'jquery-ui-core', 'jquery-ui-sortable' ] );
+		wp_enqueue_style( 'pe-post-type-creator-sortable', plugins_url( '', __FILE__ ) . '/assets/css/sortable.css', [] );
 	}
 
 	/**
@@ -343,29 +416,9 @@ class Post_Types_Creator {
 			register_taxonomy( $slug, $taxonomy_args['post_type'], $taxonomy_args );
 
 			if ( is_admin() ) {
-				$current_taxonomy = $this->get_current_taxonomy( $taxonomy_args['post_type'] );
 
-				if ( $taxonomy_args['sortable'] &&
-					isset( $this->taxonomies[$current_taxonomy]['sortable'] ) &&
-					$this->taxonomies[$current_taxonomy]['sortable'] == true
-				) {
-					/**
-					 * Show all terms on the same page. Needed for sortable to work.
-					 */
-					// TODO: Better solution if there are many terms needed.
-					add_filter( 'edit_' . $slug . '_per_page', function() {
-						return 999999999;
-					} );
+				$this->register_sortable( $slug, $taxonomy_args, true );
 
-					wp_enqueue_script( 'jquery-ui-core' );
-					wp_enqueue_script( 'jquery-ui-sortable' );
-
-					wp_enqueue_script( 'pe-post-type-creator-sortable', plugins_url( '', __FILE__ ) . '/assets/js/sortable.js', ['jquery', 'jquery-ui-core', 'jquery-ui-sortable'] );
-					wp_enqueue_style( 'pe-post-type-creator-sortable', plugins_url( '', __FILE__ ) . '/assets/css/sortable.css', [] );
-				}
-				else {
-					$this->taxonomies[$slug]['sortable'] = false;
-				}
 			}
 		}
 
@@ -394,7 +447,7 @@ class Post_Types_Creator {
 
 		$taxonomy = $taxonomies[0];
 
-		if (array_key_exists( $taxonomy, $this->taxonomies ) && isset( $this->taxonomies[$taxonomy]['sortable'] ) ) {
+		if (array_key_exists( $taxonomy, $this->taxonomies ) && isset( $this->taxonomies[ $taxonomy ]['sortable'] ) ) {
 			$order = get_option( 'taxonomy_order_'.$taxonomy, [] );
 
 			if ( ! empty( $order ) ) {
@@ -418,7 +471,7 @@ class Post_Types_Creator {
 
 		if (defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) { return; }
 
-		if ( in_array( $post->post_type , $this->post_types ) && $this->post_types[$post->post_type]['sortable'] ) {
+		if ( in_array( $post->post_type , $this->post_types ) && $this->post_types[ $post->post_type ]['sortable'] ) {
 			$current = get_post_meta( $post->ID, $this->get_sort_meta_key( $post->post_type ), true );
 
 			if ( empty( $current ) || ! is_numeric( $current ) ) {
@@ -450,8 +503,8 @@ class Post_Types_Creator {
 
 		if (
 			isset( $wp_query->query_vars['post_type'] ) &&
-			isset( $this->post_types[$wp_query->query_vars['post_type']] ) &&
-			$this->post_types[$wp_query->query_vars['post_type']]['sortable']
+			isset( $this->post_types[ $wp_query->query_vars['post_type'] ] ) &&
+			$this->post_types[ $wp_query->query_vars['post_type'] ]['sortable']
 		) {
 			$wp_query->set( 'orderby', 'meta_value_num' );
 			$wp_query->set( 'meta_key', $this->get_sort_meta_key( $wp_query->query_vars['post_type'] ) );
@@ -467,8 +520,8 @@ class Post_Types_Creator {
 
 		$post_type = $this->get_current_post_type();
 
-		if ( isset( $this->taxonomy_filters[$post_type] ) && is_array( $this->taxonomy_filters[$post_type] ) ) {
-			foreach ( $this->taxonomy_filters[$post_type] as $taxonomy ) {
+		if ( isset( $this->taxonomy_filters[ $post_type ] ) && is_array( $this->taxonomy_filters[ $post_type ] ) ) {
+			foreach ( $this->taxonomy_filters[ $post_type ] as $taxonomy ) {
 				$selected_taxonomy = filter_input( INPUT_GET, $taxonomy, FILTER_SANITIZE_STRING );
 
 				$selected = isset( $selected_taxonomy ) ? $selected_taxonomy : '';
@@ -496,19 +549,19 @@ class Post_Types_Creator {
 
 		$post_type = $this->get_current_post_type();
 
-		if ( isset( $this->taxonomy_filters[$post_type] ) && is_array( $this->taxonomy_filters[$post_type] ) ) {
-			foreach ( $this->taxonomy_filters[$post_type] as $taxonomy ) {
+		if ( isset( $this->taxonomy_filters[ $post_type ] ) && is_array( $this->taxonomy_filters[ $post_type ] ) ) {
+			foreach ( $this->taxonomy_filters[ $post_type ] as $taxonomy ) {
 				$query_vars = $query->query_vars;
 
 				if (
 					isset( $query_vars['post_type'] ) &&
 					$query_vars['post_type'] == $post_type &&
-					isset( $query_vars[$taxonomy] ) &&
-					is_numeric( $query_vars[$taxonomy] )
-					&& $query_vars[$taxonomy] != 0
+					isset( $query_vars[ $taxonomy ] ) &&
+					is_numeric( $query_vars[ $taxonomy ] )
+					&& $query_vars[ $taxonomy ] != 0
 				) {
-					$term = get_term_by( 'id', $query_vars[$taxonomy], $taxonomy );
-					$query->query_vars[$taxonomy] = $term->slug;
+					$term = get_term_by( 'id', $query_vars[ $taxonomy ], $taxonomy );
+					$query->query_vars[ $taxonomy ] = $term->slug;
 				}
 			}
 		}
@@ -533,7 +586,7 @@ class Post_Types_Creator {
 		elseif ( $typenow ) {
 			return $typenow;
 		}
-		elseif ( $current_screen && $current_screen->post_type ) {
+		elseif ( $current_screen && isset( $current_screen->post_type ) ) {
 			return $current_screen->post_type;
 		}
 		else {
@@ -585,14 +638,14 @@ class Post_Types_Creator {
 
 		global $post;
 
-		if ( isset( $this->post_types[$post->post_type ]['post_statuses'] ) && is_array( $this->post_types[$post->post_type ]['post_statuses'] ) ) {
+		if ( isset( $this->post_types[ $post->post_type ]['post_statuses'] ) && is_array( $this->post_types[ $post->post_type ]['post_statuses'] ) ) {
 			echo '<script>';
 			echo 'jQuery(document).ready(function($) {';
 
-			foreach ( $this->post_types[$post->post_type ]['post_statuses'] as $post_status_slug => $post_status ) {
+			foreach ( $this->post_types[ $post->post_type ]['post_statuses'] as $post_status_slug => $post_status ) {
 				$label = $post_status['singular_label'];
 
-				if ( $post->post_status == $post_status_slug && in_array( $post->post_status, array_keys( $this->post_types[$post->post_type ]['post_statuses'] ) ) ) {
+				if ( $post->post_status == $post_status_slug && in_array( $post->post_status, array_keys( $this->post_types[ $post->post_type ]['post_statuses'] ) ) ) {
 					$selected = ' selected="selected"';
 					?>
 					$(".misc-pub-section label").append(" <?php echo $label; ?>");
@@ -651,21 +704,21 @@ class Post_Types_Creator {
 
 	public function add_admin_column( $columns, $post_type ) {
 
-		if ( ! isset( $this->post_types[$post_type] ) ) {
+		if ( ! isset( $this->post_types[ $post_type ] ) ) {
 			return $columns;
 		}
 
-		$options = $this->post_types[$post_type];
+		$options = $this->post_types[ $post_type ];
 
 		foreach ($options['admin_columns'] as $slug => $data ) {
 
 			if ( isset( $data['location'] ) && is_int( $data['location'] ) ) {
 				$columns = array_slice( $columns, 0, $data['location'], true ) +
-					[ $slug => $data['label']] +
+					[ $slug => $data['label'] ] +
 					array_slice( $columns, $data['location'], count( $columns ) -$data['location'], true );
 			}
 			else {
-				$columns[$slug] = $data['label'];
+				$columns[ $slug ] = $data['label'];
 			}
 		}
 
@@ -680,8 +733,8 @@ class Post_Types_Creator {
 		if (isset( $this->post_types[ $post->post_type ] ) ) {
 			$options = $this->post_types[ $post->post_type ];
 
-			if ( isset( $options['admin_columns'][$column_name]['cb'] )  && is_callable( $options['admin_columns'][$column_name]['cb'] ) ) {
-				call_user_func_array( $options['admin_columns'][$column_name]['cb'], [$post_id] );
+			if ( isset( $options['admin_columns'][ $column_name ]['cb'] )  && is_callable( $options['admin_columns'][ $column_name ]['cb'] ) ) {
+				call_user_func_array( $options['admin_columns'][ $column_name ]['cb'], [ $post_id ] );
 			}
 		}
 	}

@@ -10,7 +10,6 @@
     <rule ref="WordPress-Core">
         <exclude name="PEAR.Functions.FunctionCallSignature.EmptyLine" />
         <exclude name="WordPress.Arrays.ArrayKeySpacingRestrictions" />
-        <exclude name="WordPress.Arrays.ArrayDeclaration" />
         <exclude name="WordPress.PHP.YodaConditions" />
         <exclude name="WordPress.WhiteSpace.ControlStructureSpacing.NoSpaceAfterStructureOpen" />
         <exclude name="WordPress.WhiteSpace.ControlStructureSpacing.NoSpaceBetweenStructureColon" />

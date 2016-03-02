@@ -30,7 +30,7 @@ class PostTypesTest extends WP_UnitTestCase {
 				'post_status'   => 'active',
 				'post_type'		=> 'stores',
 				'post_author'   => 1,
-				'post_category' => [ 8,39 ]
+				'post_category' => [ 8,39 ],
 			];
 
 			$post_id = wp_insert_post( $my_post );
