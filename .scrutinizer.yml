@@ -48,7 +48,7 @@ build:
     tests:
         override:
             -
-                command: 'phpunit --coverage-clover=.coveralls.yml'
+                command: 'phpunit --coverage-clover=some-file'
                 coverage:
-                    file: '.coveralls.yml'
+                    file: 'some-file'
                     format: 'php-clover'
