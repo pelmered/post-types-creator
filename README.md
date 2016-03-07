@@ -43,10 +43,6 @@ Helper plugin that provides an easy interface for creating fully translated cust
 - Scaffolding command for WP-CLI to genereate plugin
 - Use new term meta functionality for sorting for WordPress 4.4+
 
-##Requirements
-- PHP 5.4+ (PHP 7 and HHVM supported)
-- WordPress 4.0+ (older releases will most likely work as well, but is not officially supported)
-
 ##Common problems & troubleshooting
 
 The plugin is very simple to use if you know basic PHP. Most of the problems you are likely to run into is related to WordPress built in permalink cache or messed up or non-existing meta data for sorting(the posts will not show up in the post linst in wp-admin). To fix both those problems. Just add `&ptc-reinit=1` to the URL/querystring anywhere in wp-admin to run a force reinitialization that will fix the problems, for example: `http://example.com/wp-admin/edit.php?post_type=page&ptc-reinit=1`
