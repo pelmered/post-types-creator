@@ -11,7 +11,7 @@ checks:
       ruleset_path: 'phpcs.xml'
 
 tools:
-  external_code_coverage: false
+  external_code_coverage: true
 
   php_cs_fixer:
     enabled: true
@@ -43,12 +43,3 @@ tools:
     command: hhvm
     extensions:
       - php
-
-build:
-    tests:
-        override:
-            -
-                command: 'phpunit --coverage-clover=some-file'
-                coverage:
-                    file: 'some-file'
-                    format: 'php-clover'
