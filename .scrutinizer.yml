@@ -43,3 +43,12 @@ tools:
     command: hhvm
     extensions:
       - php
+
+build:
+    tests:
+        override:
+            -
+                command: 'phpunit --coverage-clover=some-file'
+                coverage:
+                    file: '.coveralls.yml'
+                    format: 'php-clover'
