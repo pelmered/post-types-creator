@@ -35,14 +35,15 @@ jQuery(function ($) {
 				action: 'pe_ptc_sort_posts',
 				post_type: $post_type,
 				taxonomy: $taxonomy,
-				post_data: post_data
+				post_data: post_data,
+				peptc_sort_nonce: PEPTCSortable.peptcSortNonce
 			};
 
 			// POST to server using $.post or $.ajax
 			$.ajax({
 				data: data,
 				type: 'POST',
-				url: ajaxurl
+				url: PEPTCSortable.ajaxurl
 			});
 		}
 	});

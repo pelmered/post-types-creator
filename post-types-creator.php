@@ -403,6 +403,11 @@ class Post_Types_Creator {
 
 		wp_enqueue_script( 'pe-post-type-creator-sortable', plugins_url( '', __FILE__ ) . '/assets/js/sortable.js', [ 'jquery', 'jquery-ui-core', 'jquery-ui-sortable' ] );
 		wp_enqueue_style( 'pe-post-type-creator-sortable', plugins_url( '', __FILE__ ) . '/assets/css/sortable.css', [] );
+
+		wp_localize_script( 'pe-post-type-creator-sortable', 'PEPTCSortable', array(
+			'ajaxurl'			=> admin_url( 'admin-ajax.php' ),
+			'peptcSortNonce'	=> wp_create_nonce( 'peptc-sorting-nonce' ),
+		) );
 	}
 
 	/**
@@ -670,36 +675,107 @@ class Post_Types_Creator {
 	 */
 	public function sortable_ajax_handler() {
 
+		$nonce = filter_input( INPUT_POST, 'peptc_sort_nonce', FILTER_SANITIZE_STRING );
+		$nonce = $_POST['peptc_sort_nonce'];
+
+		//var_dump('sadasd');
+		//die();
+
+		//wp_send_json( [ 'status' => 'auth_failed' ] );
+
+		if ( ! wp_verify_nonce( $nonce, 'peptc-sorting-nonce' ) || ! current_user_can( 'edit_posts' ) ) {
+			//todo
+			wp_send_json( [ 'status' => 'auth_failed' ] );
+		}
+
 		parse_str( filter_input( INPUT_POST, 'post_data', FILTER_SANITIZE_STRING ), $post_data );
 
-		$i = 1;
+		var_dump($post_data);
 
 		if ( isset( $post_data['post'] ) && is_array( $post_data['post'] ) ) {
-			$post_type = filter_input( INPUT_POST, 'post_type', FILTER_SANITIZE_STRING );
-
-			$sort_meta_key = $this->get_sort_meta_key( $post_type );
-
-			foreach ( $post_data['post'] as $post_id ) {
-				if ( $this->use_acf ) {
-					update_field( $sort_meta_key, $i++, $post_id );
-				}
-				else {
-					update_post_meta( $post_id, $sort_meta_key, $i++ );
-				}
-			}
+			$this->update_post_sort( $post_data['post'] );
 		}
 		if ( isset( $post_data['tag'] ) && is_array( $post_data['tag'] ) ) {
+
+			// TODO
+			$this->update_term_sort( $post_data['tag'] );
+
+
+			/*
 			$taxonomy = filter_input( INPUT_POST, 'taxonomy', FILTER_SANITIZE_STRING );
 
 			if ( ! empty( $taxonomy ) && ! empty( $post_data['tag'] ) ) {
 				update_option( 'taxonomy_order_'.$taxonomy , $post_data['tag'] );
 			}
+			*/
 		}
+
+
 
 		wp_send_json( [ 'status' => 'ok' ] );
 
-		wp_die();
+		//wp_die();
 	}
+
+	private function update_post_sort( $post_data ) {
+
+		$post_type = filter_input( INPUT_POST, 'post_type', FILTER_SANITIZE_STRING );
+		$sort_meta_key = $this->get_sort_meta_key( $post_type );
+		$i = 1;
+
+		foreach ( $post_data as $post_id ) {
+			$this->update_post_meta( $sort_meta_key, $i++, $post_id );
+		}
+
+	}
+
+	function update_post_meta( $meta_key, $meta_value, $post_id ) {
+		if ( $this->use_acf ) {
+			update_field( $meta_key, $meta_value, $post_id );
+		}
+		else {
+			update_post_meta( $post_id, $meta_key, $meta_value );
+		}
+	}
+
+	private function update_term_sort( $term_data ) {
+
+		$taxonomy = filter_input( INPUT_POST, 'taxonomy', FILTER_SANITIZE_STRING );
+		$sort_meta_key = $this->get_sort_meta_key( $taxonomy );
+		$i = 1;
+
+		global $wp_version;
+
+		if ( version_compare( $wp_version, 4.4, '>=' ) || $this->use_acf ) {
+
+			foreach ( $term_data as $term_id ) {
+				$this->update_post_meta( $sort_meta_key, $i++, $term_id );
+			}
+
+		}
+		else {
+			if ( ! empty( $taxonomy ) && ! empty( $term_data ) ) {
+				update_option( 'taxonomy_order_'.$taxonomy, $term_data );
+			}
+		}
+
+	}
+
+	function update_term_meta( $meta_key, $meta_value, $term_id ) {
+
+		$taxonomy = filter_input( INPUT_POST, 'taxonomy', FILTER_SANITIZE_STRING );
+
+		if ( $this->use_acf ) {
+
+			$term = get_term( $term_id, $taxonomy );
+
+			update_field( $meta_key, $meta_value, $term );
+		}
+		else {
+			update_term_meta( $term_id, $meta_key, $meta_value );
+    	}
+	}
+
 
 
 	public function add_admin_column( $columns, $post_type ) {
