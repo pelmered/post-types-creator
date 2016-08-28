@@ -11,7 +11,7 @@ checks:
       ruleset_path: 'phpcs.xml'
 
 tools:
-  external_code_coverage: false
+  external_code_coverage: true
 
   php_cs_fixer:
     enabled: true
