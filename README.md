@@ -38,14 +38,11 @@ Helper plugin that provides an easy interface for creating fully translated cust
 - Drag & drop sortable (drag and drop in the normal list view in WP Admin for both posts and taxonomies/terms)
 - Integration with Advanced Custom Fields(optional)
 
-##Planned features
-- More unit tests
-- Scaffolding command for WP-CLI to generate plugin
+##Planned features for version 2.0
+- Complete rewrite of better code structure and quaility
+- More unit tests (Initial goal is at least 50% code coverage)
+- Scaffolding command for WP-CLI to genereate plugin
 - Use new term meta functionality for sorting for WordPress 4.4+
-
-##Requirements
-- PHP 5.4+ (PHP 7 and HHVM supported)
-- WordPress 4.0+ (older releases will most likely work as well, but is not officially supported)
 
 ##Common problems & troubleshooting
 
